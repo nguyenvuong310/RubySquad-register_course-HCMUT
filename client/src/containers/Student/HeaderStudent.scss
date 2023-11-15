@@ -1,0 +1,138 @@
+.home-header-container {
+  width: 100%;
+  height: 50px !important;
+  background-color: #3c8dbc;
+
+  // border: 1px solid red;
+  // box-shadow: 5px 1px 10px rgba(0, 0, 0, 0.3);
+  //border: 1px solid red;
+
+  .Header-brand {
+    float: left;
+    height: 50px;
+
+    .homepage-student-logo {
+      margin-left: 10px;
+      cursor: pointer;
+      float: left !important;
+    }
+
+    .Brand-content {
+      height: 50px;
+      float: left;
+      padding: 15px 15px;
+      font-size: 18px;
+      line-height: 20px;
+      text-decoration: none;
+      color: white;
+    }
+  }
+
+  .Header-navbar-left {
+    .Nav-home:hover {
+      background-color: #337ab7;
+      transition: 0.7s;
+    }
+
+    .Nav-home {
+      height: 50px;
+      float: left;
+      padding: 15px 15px;
+      line-height: 20px;
+      text-decoration: none;
+      color: white;
+
+      .Nav-home-content {
+        margin-left: -7px;
+        text-decoration: none;
+        color: white;
+      }
+    }
+
+    .Nav-res:hover {
+      background-color: #337ab7;
+      transition: 0.7s;
+    }
+
+    .Nav-res {
+      height: 50px;
+      float: left;
+      padding: 15px 15px;
+      line-height: 20px;
+      text-decoration: none;
+      color: white;
+
+      .Nav-res-content {
+        margin-left: -6px;
+        text-decoration: none;
+        color: white;
+      }
+    }
+  }
+
+  .Header-navbar-right {
+    float: right;
+
+    .Nav-log-out:hover {
+      background-color: #337ab7;
+      transition: 0.7s;
+      cursor: pointer;
+    }
+
+    .Nav-log-out {
+      margin-right: 10px;
+      height: 50px;
+      float: left;
+      padding: 15px 15px;
+      line-height: 20px;
+      text-decoration: none;
+      color: white;
+
+      .Nav-logout-content {
+        margin-left: -7px;
+        text-decoration: none;
+        color: white;
+      }
+    }
+
+    .Nav-tutorial:hover {
+      background-color: #337ab7;
+      transition: 0.7s;
+    }
+
+    .Nav-tutorial {
+      height: 50px;
+      float: left;
+      padding: 15px 15px;
+      line-height: 20px;
+      text-decoration: none;
+      color: white;
+
+      .Nav-tutorial-content {
+        margin-left: -7px;
+        text-decoration: none;
+        color: white;
+      }
+    }
+
+    .Nav-user:hover {
+      background-color: #337ab7;
+      transition: 0.7s;
+    }
+
+    .Nav-user {
+      height: 50px;
+      float: left;
+      padding: 15px 15px;
+      line-height: 20px;
+      text-decoration: none;
+      color: white;
+
+      .Nav-user-content {
+        padding-left: 5px;
+        text-decoration: none;
+        color: white;
+      }
+    }
+  }
+}

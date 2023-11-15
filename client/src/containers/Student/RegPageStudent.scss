@@ -1,0 +1,80 @@
+.regpage-content-wrapper {
+    .regpage-container {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+
+        .regpage-content-header {
+            position: relative;
+            padding: 15px 15px 0 15px;
+
+            .registration {
+                font-size: 24px;
+                margin: 0;
+            }
+        }
+
+        .regpage-content {
+            min-height: 250px;
+            padding: 15px;
+            margin-right: auto;
+            margin-left: auto;
+            padding-left: 15px;
+            padding-right: 15px;
+
+            .regpage-table {
+                width: 100%;
+                border: 1px solid #3c8dbc;
+                position: relative;
+                border-radius: 3px;
+                margin-bottom: 20px;
+                background-color: #fff;
+                text-decoration: none;
+
+                .regpage-table-header {
+                    display: block;
+                    padding: 10px;
+                    position: relative;
+                    background-color: #3c8dbc;
+
+                    .regpage-table-header-content {
+                        display: inline-block;
+                        font-size: 16px;
+                        color: #fff;
+                    }
+                }
+
+                .regpage-table-content {
+                    .regpage-form-deco {
+                        color: #343a40;
+                    }
+
+                    .regpage-form-deco:link,
+                    regpage-form-deco:visited {
+                        text-decoration: none;
+                    }
+
+                }
+
+            }
+        }
+
+        .regpage-bottom-wrapper {
+            margin-bottom: 15px;
+            margin-left: 15px;
+            margin-right: 15px;
+
+            .regpage-bottom-container {
+                text-align: right;
+
+                .button-design {
+                    font-size: 14px;
+                    cursor: grab;
+                    color: #3c8dbc;
+                }
+
+            }
+        }
+    }
+}

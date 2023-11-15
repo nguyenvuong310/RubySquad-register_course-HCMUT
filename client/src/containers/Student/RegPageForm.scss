@@ -1,0 +1,111 @@
+.regpage-form-content-wrapper {
+    min-height: 600px;
+
+    .regpage-form-container {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+
+        .regpage-form-content-header {
+            position: relative;
+            padding: 15px 15px 0 15px;
+
+            .registration-form {
+                font-size: 24px;
+                margin: 0;
+            }
+        }
+
+        .regpage-form-content {
+            min-height: 250px;
+            padding: 15px;
+            margin-right: auto;
+            margin-left: auto;
+            padding-left: 15px;
+            padding-right: 15px;
+
+            .regpage-form-table {
+                width: 100%;
+                border: 1px solid #3c8dbc;
+                position: relative;
+                border-radius: 3px;
+                margin-bottom: 20px;
+                background-color: #fff;
+                text-decoration: none;
+
+                .regpage-form-table-header {
+                    display: block;
+                    padding: 10px;
+                    position: relative;
+                    background-color: #3c8dbc;
+
+                    .regpage-form-table-header-content {
+                        display: inline-block;
+                        font-size: 16px;
+                        color: #fff;
+                    }
+                }
+
+                .regpage-form-table-content {
+                    .table {
+                        margin-left: 10px;
+
+                        .table-header-content {
+                            margin-top: 10px;
+                            border-top: 3px solid #3c8dbc;
+                            border-radius: 5px 5px 0px 0px;
+                            margin-right: 20px;
+
+                            .table-header-content-1 {
+                                margin-left: 10px;
+                                font-size: 16px;
+                            }
+
+                        }
+                    }
+
+                    .regpage-form-table-end-content {
+                        margin-left: 10px;
+                    }
+                }
+
+                .regpage-form-button {
+                    margin-left: 40%;
+                    margin-bottom: 10px;
+
+                    .regpage-home-button {
+                        margin-right: 5px;
+                        font-weight: 550;
+                        border-width: 1px;
+                        font-size: 13px;
+                    }
+
+                    .regpage-reg-button {
+                        font-weight: 550;
+                        border-width: 1px;
+                        font-size: 13px;
+                    }
+
+                }
+            }
+        }
+
+        .regpage-form-bottom-wrapper {
+            margin-bottom: 15px;
+            margin-left: 15px;
+            margin-right: 15px;
+
+            .regpage-form-bottom-container {
+                text-align: right;
+
+                .button-form-design {
+                    font-size: 14px;
+                    cursor: grab;
+                    color: #3c8dbc;
+                }
+
+            }
+        }
+    }
+}

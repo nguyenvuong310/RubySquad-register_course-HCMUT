@@ -1,0 +1,222 @@
+.login {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  background-color: #eee;
+
+  .login-container {
+    background-color: white;
+    width: 1500px;
+    height: 450px;
+    // border: 1px solid red;
+
+    .login-header {
+      background-color: #210f7a;
+      height: 70px;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+
+      .logo {
+        width: 70px;
+        height: 70px;
+      }
+
+      .login-header-content {
+        color: white;
+        font-weight: 600;
+        font-size: 30px;
+      }
+    }
+
+    .login-content {
+      height: 350px;
+      display: flex;
+
+      .login-content-left {
+        width: 500px;
+        height: 370px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .login-content-left-content {
+          background-color: #eee;
+          border-radius: 15px;
+          height: 330px;
+          width: 450px;
+          .errors {
+            border: 1px dotted #bb0000;
+            color: #bb0000;
+            background: url("../../assets/error.gif") no-repeat 20px center;
+            padding: 20px;
+            margin-bottom: 10px;
+            background-color: rgb(255, 238, 221);
+            padding-left: 100px;
+          }
+          .content1 {
+            width: 90%;
+            height: 15%;
+            font-size: 1.4em;
+            font-weight: bold;
+            border-bottom: 1px solid #dddddd;
+            color: #990033;
+            margin-left: 20px;
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+          }
+
+          .content2 {
+            margin-top: 10px;
+            margin-left: 15px;
+            width: 90%;
+            height: 15%;
+            // border: 1px solid red;
+
+            .name {
+              display: block;
+              color: #777777;
+              font-size: 107.692%;
+              font-weight: bold;
+            }
+
+            .input {
+              border-radius: 3px;
+              border: 1px solid #dddddd;
+              background: #ffffdd;
+              height: 60%;
+              width: 80%;
+            }
+
+            .input:focus {
+              background-color: rgb(197, 222, 243);
+            }
+          }
+
+          .content3 {
+            display: flex;
+            width: 90%;
+            height: 15%;
+            margin-left: 20px;
+            align-items: center;
+            // border: 1px solid red;
+            border-bottom: 1px solid #dddddd;
+
+            .warn {
+              margin-left: 10px;
+            }
+          }
+
+          .content4 {
+            .button-login {
+              background-color: #006dcc;
+              color: #ffffff;
+              cursor: pointer;
+              font-size: 14px;
+              line-height: 20px;
+              text-align: center;
+              vertical-align: middle;
+              border: none;
+              width: 70px;
+              height: 30px;
+              border-radius: 4px;
+              margin-top: 10px;
+              margin-left: 15px;
+              padding-top: 5px;
+            }
+
+            .button-clear {
+              background-color: #006dcc;
+              color: #ffffff;
+              cursor: pointer;
+              font-size: 14px;
+              line-height: 20px;
+              text-align: center;
+              vertical-align: middle;
+              border: none;
+              width: 70px;
+              height: 30px;
+              border-radius: 4px;
+              margin-top: 10px;
+              margin-left: 15px;
+            }
+          }
+
+          .content5 {
+            color: #551a8b;
+            text-decoration: underline;
+            margin-top: 15px;
+            margin-left: 15px;
+          }
+        }
+      }
+
+      .login-content-right {
+        height: 370px;
+        width: 1000px;
+        margin-top: 20px;
+
+        .content6 {
+          width: 100%;
+          height: 60px;
+
+          .login-language {
+            color: #990033;
+            font-weight: 600;
+            font-size: 20px;
+          }
+
+          .option-language {
+            display: flex;
+
+            .option {
+              color: blue;
+              text-decoration: underline;
+              margin-left: 15px;
+            }
+          }
+        }
+
+        .content7 {
+          width: 100%;
+          height: 170px;
+
+          .login-language {
+            color: #990033;
+            font-weight: 600;
+            font-size: 20px;
+          }
+
+          .note-content {
+            margin-left: 15px;
+          }
+        }
+
+        .content8 {
+          width: 100%;
+          height: 60px;
+
+          .login-language {
+            color: #990033;
+            font-weight: 600;
+            font-size: 20px;
+          }
+
+          .support {
+            display: flex;
+
+            .option1 {
+              margin-left: 15px;
+            }
+          }
+        }
+      }
+    }
+
+    .login-footer {
+      margin-top: 30px;
+    }
+  }
+}
