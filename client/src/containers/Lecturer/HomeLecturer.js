@@ -6,7 +6,8 @@ class HomeLecturer extends Component {
   render() {
     return (
       <div>
-        <HeaderLecturer />{" "}
+        <HeaderLecturer />
+
       </div>
     );
   }

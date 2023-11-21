@@ -15,14 +15,16 @@ class HomePageStudent extends Component {
     super(props);
     this.state = {
       user: {},
-      isOpenModalSetupPrint: false,
+      isOpenIcon: true,
     };
   }
-  toggleModalSetupPrint = () => {
-    this.setState({ isOpenModalSetupPrint: !this.state.isOpenModalSetupPrint });
-  };
+  switchOpenIcon() {
+    this.setState({
+      isOpenIcon: !this.state.isOpenIcon,
+    })
 
-  componentDidMount() {}
+  }
+  componentDidMount() { }
 
   // createFolder = async () => {
   //   const url = `${process.env.REACT_APP_API_URL}/drive/createFolder`;
@@ -53,18 +55,18 @@ class HomePageStudent extends Component {
                 class="btn btn-box-tool"
                 data-widget="collapse"
               >
-                <i class="fa fa-minus"></i>
+                <i onClick={() => this.switchOpenIcon()} class="fa fa-minus"></i>
               </button>
             </div>
           </div>
-          <div class="box-body no-padding">
+          <div class={this.state.isOpenIcon ? "box-body no-padding" : "close-box-body no-padding"}>
             <div class="row">
               <div class="col-md-7 col-sm-7">
                 <Link to="/regpage-student">
                   <img
                     src={DKMH}
                     alt="Đăng ký môn học"
-                    className="regpage-pic"
+                    className={"regpage-pic"}
                   />
                 </Link>
               </div>

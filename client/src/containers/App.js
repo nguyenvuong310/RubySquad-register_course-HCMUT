@@ -55,19 +55,14 @@ class App extends Component {
                   <Route
                     path={path.LOGIN}
                     component={userIsNotAuthenticated(Login)}
-                    // component={Login}
                   />
-                  {/* <Route
-                    path={path.SYSTEM}
-                    component={userIsAuthenticated(System)}
-                  /> */}
                   <Route
                     path={path.HOMEPAGESTUDENT}
                     component={studentIsAuthenticated(HomePageStudent)}
                   />
                   <Route
                     path={path.HOMEPAGELECTURER}
-                    component={lecturerIsAuthenticated(HomeLecturer)}
+                    component={HomeLecturer}
                   />
                   <Route
                     path={path.REGPAGESTUDENT}

@@ -4,6 +4,7 @@ import axios from "axios";
 import HeaderStudent from "./HeaderStudent";
 import FooterStudent from "./FooterStudent";
 import "./RegPageSelection.scss";
+import { handleSreachCourseService, handleChooseCourseService } from "../../services/userService";
 // import { push } from "connected-react-router";
 // import * as actions from "../../store/actions";
 
@@ -11,28 +12,37 @@ class RegPageSelection extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: {},
-      isOpenModalSetupPrint: false,
+      course: {},
+      isOpenCourse: false,
+      coursetoShow: {},
     };
   }
-  toggleModalSetupPrint = () => {
-    this.setState({ isOpenModalSetupPrint: !this.state.isOpenModalSetupPrint });
-  };
 
-  componentDidMount() {}
-
-  // createFolder = async () => {
-  //   const url = `${process.env.REACT_APP_API_URL}/drive/createFolder`;
-  //   const { data } = await axios.get(url, { withCredentials: true });
-  //   console.log(data);
-  //   if (data && data.errCode === 0) {
-  //     alert("success");
-  //     this.setState({ folderId: data.folderId });
-  //   }
-  // };
+  componentDidMount() { }
+  handleOnChangeCourse = (event) => {
+    let copyState = { ...this.state };
+    copyState["course"] = event.target.value;
+    this.setState({
+      ...copyState,
+    });
+  }
+  handleSearchCourse = async () => {
+    let data = await handleSreachCourseService(this.state.course)
+    if (data.course[0]) {
+      this.setState({
+        course: data.course[0],
+        isOpenCourse: true,
+        coursetoShow: data.course[0],
+      })
+    }
+  }
+  handleChooseCourse = async () => {
+    await handleChooseCourseService(this.state.course, this.props.userInfor)
+  }
   render() {
     return (
       <React.Fragment>
+        {console.log(this.props.userInfor)}
         <HeaderStudent user={this.state.user} />
         <div className="regpage-selec-content-wrapper">
           <div className="regpage-selec-container">
@@ -141,11 +151,13 @@ class RegPageSelection extends Component {
                                   class="form-control"
                                   id="txtMSMHSearch"
                                   placeholder="Mã môn học / Tên môn học"
+                                  onChange={(event) => { this.handleOnChangeCourse(event) }}
                                 />
                                 <span className="input-group-btn">
                                   <button
                                     type="button"
                                     class="btn btn-primary btn-flat"
+                                    onClick={() => this.handleSearchCourse()}
                                   >
                                     <i
                                       class="fas fa-search"
@@ -155,9 +167,26 @@ class RegPageSelection extends Component {
                                 </span>
                               </div>
                             </div>
-                            <div className="selec-box-body">
+                            <div className={this.state.isOpenCourse ? "close-selec-box-body" : "selec-box-body"}>
                               Không có môn học mở!
                             </div>
+                            <table className={this.state.isOpenCourse ? "tablecourse" : "close-selec-box-body"}>
+                              <tr>
+                                <th className="customtablecourse">STT</th>
+                                <th className="customtablecourse">Mã môn học</th>
+                                <th className="customtablecourse">Tên môn học</th>
+                                <th className="customtablecourse">Số tín chỉ</th>
+                                <th className="customtablecourse"></th>
+                              </tr>
+                              <tr>
+                                <td>1</td>
+                                <td>{this.state.coursetoShow.subject_code}</td>
+                                <td>{this.state.coursetoShow.subject_name}</td>
+                                <td>{this.state.coursetoShow.credits}</td>
+                                <td><button className="custombuttoncourse" onClick={() => this.handleChooseCourse()}>Chọn</button></td>
+                              </tr>
+                            </table>
+
                           </div>
                         </div>
                       </div>
@@ -205,6 +234,7 @@ class RegPageSelection extends Component {
 const mapStateToProps = (state) => {
   return {
     language: state.app.language,
+    userInfor: state.user.userInfo,
   };
 };
 

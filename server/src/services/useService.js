@@ -14,6 +14,7 @@ let createNewUser = (tableName, data) => {
           birthday: data.birthday,
           address: data.address,
           sex: data.sex,
+          mssv: data.mssv
         };
         let res = await CRUD.insertData(tableName, dataToInsert);
         resolve(res);
@@ -152,12 +153,45 @@ let checkUserEmail = (email) => {
     }
   });
 };
+
+let handleSearchCourseService = (input) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let course = await CRUD.getCourse(input);
+      // console.log(course)
+      if (course && course.length > 0) {
+        resolve(course);
+      } else {
+        resolve({});
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+let handleChooseCourseService = (course, userinfo) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // let course = await CRUD.getCourse(input);
+      // // console.log(course)
+      // if (course && course.length > 0) {
+      //   resolve(course);
+      // } else {
+      //   resolve({});
+      // }
+      await CRUD.chooseCourse(course, userinfo)
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
 module.exports = {
   createNewUser,
   getAllUser: getAllUser,
   getAllFaculty,
-  //   getUserInforById: getUserInforById,
-  //   updateUserData: updateUserData,
   deleteUserById: deleteUserById,
   handleUserLogin,
+  handleSearchCourseService,
+  handleChooseCourseService,
 };

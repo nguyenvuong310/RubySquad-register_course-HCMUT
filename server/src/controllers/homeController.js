@@ -3,10 +3,6 @@ import CRUD from "../Database/function/CRUD";
 import { use } from "passport";
 let getHomePage = async (req, res) => {
   try {
-    // let data = {await db.User.findAll();}
-    // // console.log("------------------------");
-    // // console.log(data);
-    // // console.log("------------------------");
     return res.render("homePage.ejs");
   } catch (error) {
     console.log(error);
@@ -41,9 +37,6 @@ let postLecturer = async (req, res) => {
 };
 let readCRUD = async (req, res) => {
   let data = await userService.getAllUser();
-  // console.log("--------------------");
-  // console.log(data);
-  // console.log("--------------------");
   return res.render("displayCRUD.ejs", {
     dataTable: data,
   });
@@ -97,6 +90,55 @@ let handleLogin = async (req, res) => {
     role: user.role,
   });
 };
+
+let handleSearchCourse = async (req, res) => {
+  let input = req.body.input;
+  if (!input) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "Missing Inputs parameter!!",
+    });
+  }
+  let course = await userService.handleSearchCourseService(input);
+  if (course) {
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "Course exit",
+      course
+    })
+  } else {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "Course not exit",
+      course: []
+    })
+  }
+};
+
+let handleChooseCourse = async (req, res) => {
+  let course = req.body.course;
+  let userinfo = req.body.userinfo;
+  if (!course || !userinfo) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "Missing Inputs parameter!!",
+    });
+  }
+  await userService.handleChooseCourseService(course, userinfo);
+  // if (course) {
+  //   return res.status(200).json({
+  //     errCode: 0,
+  //     errMessage: "Course exit",
+  //     course
+  //   })
+  // } else {
+  //   return res.status(200).json({
+  //     errCode: 1,
+  //     errMessage: "Course not exit",
+  //     course: []
+  //   })
+  // }
+};
 module.exports = {
   postStudent,
   getStudent,
@@ -106,4 +148,6 @@ module.exports = {
   handleLogin,
   getLecturer,
   postLecturer,
+  handleSearchCourse,
+  handleChooseCourse,
 };

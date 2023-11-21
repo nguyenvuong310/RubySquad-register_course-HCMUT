@@ -78,7 +78,7 @@ class Login extends Component {
       this.handleLogin();
     }
   };
-  componentDidMount() {}
+  componentDidMount() { }
 
   render() {
     return (
@@ -97,10 +97,6 @@ class Login extends Component {
             <div className="login-content">
               <div className="login-content-left">
                 <div className="login-content-left-content">
-                  {/* <div id="msg" class="errors">
-                    The credentials you provided cannot be determined to be
-                    authentic.
-                  </div> */}
                   <div className="content1">
                     Enter your Username and Password
                   </div>

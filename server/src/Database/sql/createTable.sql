@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS Users (
   name VARCHAR(255),
   email VARCHAR(255),
   password VARCHAR(255),
+  MSSV INTEGER,
   birthday DATE,
   address VARCHAR(255),
   sex BOOLEAN,

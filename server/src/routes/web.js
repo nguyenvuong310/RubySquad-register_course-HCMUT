@@ -12,6 +12,8 @@ let initWebRoutes = (app) => {
   router.get("/get-crud", homeController.readCRUD);
   router.get("/del-crud", homeController.delCRUD);
   router.post("/api/login", homeController.handleLogin);
+  router.post("/api/searchcouse", homeController.handleSearchCourse)
+  router.post("/api/choosecourse", homeController.handleChooseCourse)
   return app.use("/", router);
 };
 module.exports = initWebRoutes;

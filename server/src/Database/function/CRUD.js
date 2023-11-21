@@ -125,9 +125,86 @@ let getUserByEmail = async (email) => {
     throw new Error("Error during data retrieval:", error);
   }
 };
+
+let getCourse = async (input) => {
+  try {
+    const connection = await getConnection();
+    if (input.length == 6) {
+      const sqlQuery = `SELECT * FROM subjects WHERE subject_code = ?`;
+      const results = await new Promise((resolve, reject) => {
+        try {
+          connection.query(sqlQuery, [input], function (err, result, fields) {
+            if (err) {
+              connection.release();
+              reject(err);
+            }
+            resolve(result);
+          });
+        } catch (e) {
+          console.log("here")
+          console.log(e);
+        }
+
+      });
+      connection.release();
+
+      return results;
+    } else {
+      const sqlQuery = `SELECT * FROM subjects WHERE subject_name = ?`;
+      const results = await new Promise((resolve, reject) => {
+        try {
+          connection.query(sqlQuery, [input], function (err, result, fields) {
+            if (err) {
+              connection.release();
+              reject(err);
+            }
+            resolve(result);
+          });
+        } catch (e) {
+          console.log("here")
+          console.log(e);
+        }
+
+      });
+      connection.release();
+
+      return results;
+    }
+
+  } catch (error) {
+    throw new Error("Error during data retrieval:", error);
+  }
+}
+let chooseCourse = async (course, userinfo) => {
+  try {
+    const connection = await getConnection();
+    const sqlQuery = `INSERT INTO registerpharse1 (student_id, subject_code, semester_id, action) VALUE (?)`;
+    const input = [userinfo.MSSV, course.subject_code, "231", "INSERT"]
+    const results = await new Promise((resolve, reject) => {
+      try {
+        connection.query(sqlQuery, [input], function (err, result, fields) {
+          if (err) {
+            connection.release();
+            reject(err);
+          }
+          resolve(result);
+        });
+      } catch (e) {
+        console.log(e);
+      }
+
+    });
+    connection.release();
+    return results;
+  } catch (error) {
+    console.log("Error during data retrieval:", error);
+  }
+}
 module.exports = {
   insertData,
   getdata,
   deleteById,
   getUserByEmail,
+  getCourse,
+  chooseCourse,
 };

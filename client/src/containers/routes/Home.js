@@ -9,6 +9,7 @@ class Home extends Component {
   }
 
   componentDidMount() {
+    localStorage.removeItem("persist:user")
     setTimeout(() => {
       console.log("check login", this.props.isLoggedIn);
       console.log("check role", this.props.role);
