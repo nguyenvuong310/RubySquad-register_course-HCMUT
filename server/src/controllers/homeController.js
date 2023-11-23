@@ -125,19 +125,42 @@ let handleChooseCourse = async (req, res) => {
     });
   }
   await userService.handleChooseCourseService(course, userinfo);
-  // if (course) {
-  //   return res.status(200).json({
-  //     errCode: 0,
-  //     errMessage: "Course exit",
-  //     course
-  //   })
-  // } else {
-  //   return res.status(200).json({
-  //     errCode: 1,
-  //     errMessage: "Course not exit",
-  //     course: []
-  //   })
-  // }
+  if (course) {
+    return res.status(200).json({
+      errCode: 0,
+      errMessage: "Course exit",
+      course
+    })
+  } else {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "Course not exit",
+      course: []
+    })
+  }
+};
+
+let handleGetListRegister = async (req, res) => {
+  let userid = req.body.userinfo.MSSV;
+  if (!userid) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "Missing Inputs parameter!!",
+    });
+  }
+  let data = await userService.handleGetListRegisterService(userid);
+  if (data) {
+    return res.status(200).json({
+      errCode: 0,
+      data
+    })
+  } else {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "Can't get list register course",
+      data: []
+    })
+  }
 };
 module.exports = {
   postStudent,
@@ -150,4 +173,5 @@ module.exports = {
   postLecturer,
   handleSearchCourse,
   handleChooseCourse,
+  handleGetListRegister,
 };

@@ -173,18 +173,27 @@ let handleSearchCourseService = (input) => {
 let handleChooseCourseService = (course, userinfo) => {
   return new Promise(async (resolve, reject) => {
     try {
-      // let course = await CRUD.getCourse(input);
-      // // console.log(course)
-      // if (course && course.length > 0) {
-      //   resolve(course);
-      // } else {
-      //   resolve({});
-      // }
       await CRUD.chooseCourse(course, userinfo)
+      resolve()
     } catch (error) {
       reject(error);
     }
   });
+}
+
+let handleGetListRegisterService = (userid) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let data = await CRUD.getListRegiter(userid)
+      if (data) {
+        resolve(data)
+      } else {
+        resolve({})
+      }
+    } catch (error) {
+      reject(error);
+    }
+  })
 }
 module.exports = {
   createNewUser,
@@ -194,4 +203,5 @@ module.exports = {
   handleUserLogin,
   handleSearchCourseService,
   handleChooseCourseService,
+  handleGetListRegisterService,
 };

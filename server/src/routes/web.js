@@ -14,6 +14,7 @@ let initWebRoutes = (app) => {
   router.post("/api/login", homeController.handleLogin);
   router.post("/api/searchcouse", homeController.handleSearchCourse)
   router.post("/api/choosecourse", homeController.handleChooseCourse)
+  router.post("/api/getlistregister", homeController.handleGetListRegister)
   return app.use("/", router);
 };
 module.exports = initWebRoutes;

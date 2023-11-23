@@ -22,8 +22,17 @@ const handleChooseCourseService = async (course, userinfo) => {
     console.log(error)
   }
 }
+
+const getListRegisterService = async (userinfo) => {
+  try {
+    return axios.post("/api/getlistregister", { userinfo: userinfo })
+  } catch (error) {
+    console.log(error)
+  }
+}
 export {
   handleLoginApi,
   handleSreachCourseService,
   handleChooseCourseService,
+  getListRegisterService,
 };

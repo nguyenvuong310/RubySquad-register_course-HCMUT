@@ -200,6 +200,31 @@ let chooseCourse = async (course, userinfo) => {
     console.log("Error during data retrieval:", error);
   }
 }
+let getListRegiter = async (userid) => {
+  try {
+    const connection = await getConnection();
+    const sqlQuery = `SELECT * FROM registerpharse1 WHERE student_id = ?`;
+    const input = [userid]
+    const results = await new Promise((resolve, reject) => {
+      try {
+        connection.query(sqlQuery, [input], function (err, result, fields) {
+          if (err) {
+            connection.release();
+            reject(err);
+          }
+          resolve(result);
+        });
+      } catch (e) {
+        console.log(e);
+      }
+
+    });
+    connection.release();
+    return results;
+  } catch (error) {
+    console.log("Error during data retrieval:", error);
+  }
+}
 module.exports = {
   insertData,
   getdata,
@@ -207,4 +232,5 @@ module.exports = {
   getUserByEmail,
   getCourse,
   chooseCourse,
+  getListRegiter,
 };

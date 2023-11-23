@@ -4,7 +4,8 @@ import axios from "axios";
 import HeaderStudent from "./HeaderStudent";
 import FooterStudent from "./FooterStudent";
 import "./RegPageSelection.scss";
-import { handleSreachCourseService, handleChooseCourseService } from "../../services/userService";
+import { handleSreachCourseService, handleChooseCourseService, getListRegisterService } from "../../services/userService";
+import { toast } from "react-toastify";
 // import { push } from "connected-react-router";
 // import * as actions from "../../store/actions";
 
@@ -15,6 +16,7 @@ class RegPageSelection extends Component {
       course: {},
       isOpenCourse: false,
       coursetoShow: {},
+      listregister: {},
     };
   }
 
@@ -34,15 +36,39 @@ class RegPageSelection extends Component {
         isOpenCourse: true,
         coursetoShow: data.course[0],
       })
+    } else {
+      console.log("Don't exit")
     }
   }
   handleChooseCourse = async () => {
     await handleChooseCourseService(this.state.course, this.props.userInfor)
+    await this.getListRegister();
+  }
+  getListRegister = async () => {
+    console.log(1)
+    let data = await getListRegisterService(this.props.userInfor)
+    if (data.data[0]) {
+      this.setState({
+        listregister: data.data[0]
+      })
+      toast.success('Đăng ký thành công', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      })
+    } else {
+      console.log("Don't have register")
+    }
   }
   render() {
     return (
       <React.Fragment>
-        {console.log(this.props.userInfor)}
+        {/* {console.log(this.props.userInfor)} */}
         <HeaderStudent user={this.state.user} />
         <div className="regpage-selec-content-wrapper">
           <div className="regpage-selec-container">
