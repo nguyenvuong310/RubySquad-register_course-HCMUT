@@ -2,11 +2,12 @@
   width: 100%;
   height: 50px !important;
   background-color: #3c8dbc;
-
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   // border: 1px solid red;
   // box-shadow: 5px 1px 10px rgba(0, 0, 0, 0.3);
   //border: 1px solid red;
-
   .Header-brand {
     float: left;
     height: 50px;

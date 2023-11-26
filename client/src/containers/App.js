@@ -13,17 +13,14 @@ import {
 } from "../hoc/authentication";
 
 import { path } from "../utils";
-
-// import Login from '../routes/Login';
 import Login from "./Auth/Login";
 import Home from "./routes/Home";
 import HomeLecturer from "./Lecturer/HomeLecturer";
-import { CustomToastCloseButton } from "../components/CustomToast";
-import ConfirmModal from "../components/ConfirmModal";
-// import HomePage from "./HomePage/HomePage.js";
+import HomePageAdmin from "./Admin/HomePageAdmin";
 import RegPageSelection from "./Student/RegPageSelection";
 import CustomScrollbars from "../components/CustomScrollbars";
 import RegPageForm from "./Student/RegPageForm";
+import CreateStudent from "./Admin/Create-student";
 class App extends Component {
   handlePersistorState = () => {
     const { persistor } = this.props;
@@ -76,6 +73,11 @@ class App extends Component {
                   <Route
                     path={path.REGPAGESELECT}
                     component={studentIsAuthenticated(RegPageSelection)}
+                  />
+                  <Route path={path.HOMEPAGEADMIN} component={HomePageAdmin} />
+                  <Route
+                    path={"/manage/create-student"}
+                    component={CreateStudent}
                   />
                 </Switch>
               </CustomScrollbars>

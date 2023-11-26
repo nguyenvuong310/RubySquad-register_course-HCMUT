@@ -7,32 +7,35 @@ const handleLoginApi = async (email, password) => {
   }
 };
 
-const handleSreachCourseService = async (input) => {
+const handleSearchCourseService = async (input) => {
   try {
-    return axios.post("/api/searchcouse", { input: input })
+    return axios.post("/api/searchcourse", { input: input });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
 const handleChooseCourseService = async (course, userinfo) => {
   try {
-    return axios.post("/api/choosecourse", { course: course, userinfo: userinfo })
+    return axios.post("/api/choosecourse", {
+      course: course,
+      userinfo: userinfo,
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
-const getListRegisterService = async (userinfo) => {
+const getListRegisterService = async (mssv) => {
   try {
-    return axios.post("/api/getlistregister", { userinfo: userinfo })
+    return axios.post("/api/getlistregister", { mssv: mssv });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 export {
   handleLoginApi,
-  handleSreachCourseService,
+  handleSearchCourseService,
   handleChooseCourseService,
   getListRegisterService,
 };

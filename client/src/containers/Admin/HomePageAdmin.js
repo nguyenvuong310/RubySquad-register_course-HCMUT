@@ -1,41 +1,22 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import axios from "axios";
-import HeaderStudent from "./HeaderStudent";
-import FooterStudent from "./FooterStudent";
-import "./HomePageStudent.scss";
-// import { push } from "connected-react-router";
-// import * as actions from "../../store/actions";
+import NavAdmin from "./navAdmin";
 
 class HomePageStudent extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      user: {},
-      isOpenModalSetupPrint: false,
-    };
+    this.state = {};
   }
-  toggleModalSetupPrint = () => {
-    this.setState({ isOpenModalSetupPrint: !this.state.isOpenModalSetupPrint });
-  };
+  toggleModalSetupPrint = () => {};
 
   componentDidMount() {}
 
-  // createFolder = async () => {
-  //   const url = `${process.env.REACT_APP_API_URL}/drive/createFolder`;
-  //   const { data } = await axios.get(url, { withCredentials: true });
-  //   console.log(data);
-  //   if (data && data.errCode === 0) {
-  //     alert("success");
-  //     this.setState({ folderId: data.folderId });
-  //   }
-  // };
   render() {
     return (
       <>
-        <HeaderStudent user={this.state.user} />
-        <div className="container-register">HOME</div>
-        <FooterStudent />
+        <div className="container-register-admin-page">
+          <NavAdmin />
+        </div>
       </>
     );
   }

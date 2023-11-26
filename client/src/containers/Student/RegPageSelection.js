@@ -4,7 +4,13 @@ import axios from "axios";
 import HeaderStudent from "./HeaderStudent";
 import FooterStudent from "./FooterStudent";
 import "./RegPageSelection.scss";
-import { handleSreachCourseService, handleChooseCourseService, getListRegisterService } from "../../services/userService";
+import TableRegister from "./TableRegister";
+import CustomScrollbars from "../../components/CustomScrollbars";
+import {
+  handleSearchCourseService,
+  handleChooseCourseService,
+  getListRegisterService,
+} from "../../services/userService";
 import { toast } from "react-toastify";
 // import { push } from "connected-react-router";
 // import * as actions from "../../store/actions";
@@ -13,59 +19,81 @@ class RegPageSelection extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      course: {},
+      course: "",
       isOpenCourse: false,
-      coursetoShow: {},
-      listregister: {},
+      coursetoShow: [],
+      listregister: [],
     };
   }
 
-  componentDidMount() { }
+  async componentDidMount() {
+    this.getListRegister();
+  }
   handleOnChangeCourse = (event) => {
     let copyState = { ...this.state };
     copyState["course"] = event.target.value;
     this.setState({
       ...copyState,
     });
-  }
+  };
   handleSearchCourse = async () => {
-    let data = await handleSreachCourseService(this.state.course)
-    if (data.course[0]) {
-      this.setState({
-        course: data.course[0],
-        isOpenCourse: true,
-        coursetoShow: data.course[0],
-      })
-    } else {
-      console.log("Don't exit")
+    if (this.state.course) {
+      let res = await handleSearchCourseService(this.state.course);
+      if (res && res.errCode === 0) {
+        this.setState({
+          isOpenCourse: true,
+          coursetoShow: res.course,
+        });
+      } else {
+        console.log("Don't exit");
+      }
     }
-  }
-  handleChooseCourse = async () => {
-    await handleChooseCourseService(this.state.course, this.props.userInfor)
-    await this.getListRegister();
-  }
-  getListRegister = async () => {
-    console.log(1)
-    let data = await getListRegisterService(this.props.userInfor)
-    if (data.data[0]) {
-      this.setState({
-        listregister: data.data[0]
-      })
-      toast.success('Đăng ký thành công', {
+  };
+  handleChooseCourse = async (course) => {
+    let res = await handleChooseCourseService(course, this.props.userInfor);
+    if (res && res.errCode === 0) {
+      toast.success("Đăng ký thành công", {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: 1000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
         theme: "light",
-      })
+      });
     } else {
-      console.log("Don't have register")
+      toast.warn("Môn học đã đăng ký", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
-  }
+    await this.getListRegister();
+  };
+  getListRegister = async () => {
+    if (this.props.userInfor && this.props.userInfor.MSSV) {
+      let res = await getListRegisterService(this.props.userInfor.MSSV);
+      if (res && res.data) {
+        this.setState({
+          listregister: res.data,
+        });
+      }
+    }
+  };
+  handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      this.handleSearchCourse();
+    }
+  };
   render() {
+    const { coursetoShow } = this.state;
+    const { listregister } = this.state;
     return (
       <React.Fragment>
         {/* {console.log(this.props.userInfor)} */}
@@ -176,8 +204,14 @@ class RegPageSelection extends Component {
                                   className="input-group-search"
                                   class="form-control"
                                   id="txtMSMHSearch"
+                                  value={this.state.course}
                                   placeholder="Mã môn học / Tên môn học"
-                                  onChange={(event) => { this.handleOnChangeCourse(event) }}
+                                  onChange={(event) => {
+                                    this.handleOnChangeCourse(event);
+                                  }}
+                                  onKeyDown={(event) =>
+                                    this.handleKeyDown(event)
+                                  }
                                 />
                                 <span className="input-group-btn">
                                   <button
@@ -193,39 +227,70 @@ class RegPageSelection extends Component {
                                 </span>
                               </div>
                             </div>
-                            <div className={this.state.isOpenCourse ? "close-selec-box-body" : "selec-box-body"}>
+                            <div
+                              className={
+                                this.state.isOpenCourse
+                                  ? "close-selec-box-body"
+                                  : "selec-box-body"
+                              }
+                            >
                               Không có môn học mở!
                             </div>
-                            <table className={this.state.isOpenCourse ? "tablecourse" : "close-selec-box-body"}>
-                              <tr>
-                                <th className="customtablecourse">STT</th>
-                                <th className="customtablecourse">Mã môn học</th>
-                                <th className="customtablecourse">Tên môn học</th>
-                                <th className="customtablecourse">Số tín chỉ</th>
-                                <th className="customtablecourse"></th>
-                              </tr>
-                              <tr>
-                                <td>1</td>
-                                <td>{this.state.coursetoShow.subject_code}</td>
-                                <td>{this.state.coursetoShow.subject_name}</td>
-                                <td>{this.state.coursetoShow.credits}</td>
-                                <td><button className="custombuttoncourse" onClick={() => this.handleChooseCourse()}>Chọn</button></td>
-                              </tr>
-                            </table>
+                            <CustomScrollbars
+                              style={{ height: "400px", width: "100%" }}
+                            >
+                              {" "}
+                              <table
+                                className={
+                                  this.state.isOpenCourse
+                                    ? "tablecourse"
+                                    : "close-selec-box-body"
+                                }
+                              >
+                                <tr>
+                                  <th className="customtablecourse">
+                                    Mã môn học
+                                  </th>
+                                  <th className="customtablecourse">
+                                    Tên môn học
+                                  </th>
+                                  <th className="customtablecourse">
+                                    Số tín chỉ
+                                  </th>
+                                  <th className="customtablecourse"></th>
+                                </tr>
 
+                                {coursetoShow &&
+                                  coursetoShow.length > 0 &&
+                                  coursetoShow.map((course, index) => (
+                                    <tr key={index}>
+                                      <td className="customtablecourse">
+                                        {course.subject_code}{" "}
+                                      </td>
+                                      <td className="customtablecourse">
+                                        {course.subject_name}
+                                      </td>
+                                      <td className="customtablecourse">
+                                        {course.credits}
+                                      </td>
+                                      <td>
+                                        <button
+                                          className="custombuttoncourse"
+                                          onClick={() =>
+                                            this.handleChooseCourse(course)
+                                          }
+                                        >
+                                          Chọn
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  ))}
+                              </table>
+                            </CustomScrollbars>
                           </div>
                         </div>
                       </div>
-                      <div className="selec-response">
-                        <div className="selec-response-box">
-                          <div className="selec-response-box-header">
-                            Phiếu đăng ký
-                          </div>
-                          <div className="selec-response-box-body">
-                            Chưa có môn học đăng ký!
-                          </div>
-                        </div>
-                      </div>
+                      <TableRegister listregister={this.state.listregister} />
                     </div>
                   </div>
                 </div>

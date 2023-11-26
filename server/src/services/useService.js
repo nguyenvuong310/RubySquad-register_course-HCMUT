@@ -6,15 +6,14 @@ let createNewUser = (tableName, data) => {
   return new Promise(async (resolve, reject) => {
     try {
       if (data) {
-        let hashPasswordFromBrcypt = await hashUserPassword(data.password);
         let dataToInsert = {
           name: data.name,
           email: data.email,
-          password: hashPasswordFromBrcypt,
+          password: data.password,
           birthday: data.birthday,
           address: data.address,
           sex: data.sex,
-          mssv: data.mssv
+          mssv: data.mssv,
         };
         let res = await CRUD.insertData(tableName, dataToInsert);
         resolve(res);
@@ -54,16 +53,6 @@ let createNewStudent = (tableName, data) => {
   //   console.log(hashPasswordFromBrcypt);
 };
 
-let hashUserPassword = (password) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      var hashPassword = await bcrypt.hashSync(password, salt);
-      resolve(hashPassword);
-    } catch (error) {
-      reject(error);
-    }
-  });
-};
 let getAllUser = () => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -107,7 +96,7 @@ let handleUserLogin = (email, password) => {
         let users = await CRUD.getUserByEmail(email);
         let user = users[0];
         if (user) {
-          let check = bcrypt.compareSync(password, user.password);
+          let check = password === user.password;
           if (check) {
             delete user.password;
             userData.errCode = 0;
@@ -168,33 +157,33 @@ let handleSearchCourseService = (input) => {
       reject(error);
     }
   });
-}
+};
 
 let handleChooseCourseService = (course, userinfo) => {
   return new Promise(async (resolve, reject) => {
     try {
-      await CRUD.chooseCourse(course, userinfo)
-      resolve()
+      let res = await CRUD.chooseCourse(course, userinfo);
+      resolve(res);
     } catch (error) {
       reject(error);
     }
   });
-}
+};
 
 let handleGetListRegisterService = (userid) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let data = await CRUD.getListRegiter(userid)
+      let data = await CRUD.getListRegiter(userid);
       if (data) {
-        resolve(data)
+        resolve(data);
       } else {
-        resolve({})
+        resolve({});
       }
     } catch (error) {
       reject(error);
     }
-  })
-}
+  });
+};
 module.exports = {
   createNewUser,
   getAllUser: getAllUser,

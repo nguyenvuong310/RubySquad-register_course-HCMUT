@@ -12,9 +12,9 @@ let initWebRoutes = (app) => {
   router.get("/get-crud", homeController.readCRUD);
   router.get("/del-crud", homeController.delCRUD);
   router.post("/api/login", homeController.handleLogin);
-  router.post("/api/searchcouse", homeController.handleSearchCourse)
-  router.post("/api/choosecourse", homeController.handleChooseCourse)
-  router.post("/api/getlistregister", homeController.handleGetListRegister)
+  router.post("/api/searchcourse", homeController.handleSearchCourse);
+  router.post("/api/choosecourse", homeController.handleChooseCourse);
+  router.post("/api/getlistregister", homeController.handleGetListRegister);
   return app.use("/", router);
 };
 module.exports = initWebRoutes;

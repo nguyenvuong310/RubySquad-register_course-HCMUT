@@ -156,13 +156,11 @@
               width: 1100px;
               min-height: 600px;
 
-
               .selec-subList {
                 width: 1105px;
                 height: 489px;
                 //border: 1px solid black;
                 display: block;
-
 
                 .selec-subList-box {
                   position: relative;
@@ -187,12 +185,10 @@
                   }
 
                   .selec-subList-box-body {
-
                     min-height: 445px;
 
                     .selec-box-search {
                       height: 35px;
-
 
                       .selec-input {
                         width: 100%;
@@ -226,7 +222,6 @@
 
                     .close-selec-box-body {
                       display: none;
-
                     }
 
                     .tablecourse {
@@ -279,11 +274,75 @@
                   }
 
                   .selec-response-box-body {
-                    border-top-left-radius: 0;
-                    border-top-right-radius: 0;
-                    border-bottom-right-radius: 3px;
-                    border-bottom-left-radius: 3px;
+                    width: 100%;
+                    position: relative;
+                    margin-bottom: 20px;
+                    background-color: #fff;
+                    text-decoration: none;
                     padding: 10px;
+
+                    .selec-response-box-body-content {
+                      display: block;
+                      border: 1px solid #3c8dbc;
+                      border-radius: 3px;
+
+                      .selec-response-box-body-content-header {
+                        background-color: #3c8dbc;
+
+                        .selec-response-box-body-content-header-title {
+                          display: inline-block;
+                          margin: 10px;
+                          color: white;
+                          font-size: 20px;
+                        }
+                      }
+
+                      .selec-response-box-body-content-container {
+                        width: 100%;
+                        position: relative;
+                        margin-top: 10px;
+                        margin-bottom: 20px;
+                        background-color: #fff;
+                        text-decoration: none;
+                        padding: 10px;
+
+                        .selec-response-box-body-content-container-header {
+                          background-color: #00c0ef;
+                          border: 3px solid #00c0ef;
+                          border-radius: 3px;
+                          margin-bottom: 1px;
+
+                          .selec-response-box-body-content-container-header-title {
+                            display: inline-block;
+                            margin: 10px;
+                            color: white;
+                            font-size: 22px;
+                            font-weight: 600;
+                          }
+                        }
+
+                        .selec-response-box-body-content-table {
+                          margin-bottom: 20px;
+                          background-color: #fff;
+                          border: 1px solid #ddd;
+                          border-radius: 4px;
+                          box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+
+                          .selec-response-box-body-content-subject-name {
+                            font-size: 18px;
+                            padding: 10px 15px;
+                            color: #333;
+                            background-color: #f5f5f5;
+                            border: 1px solid #ddd;
+                          }
+
+                          .selec-response-box-body-content-subject-detail {
+                            padding: 15px;
+                            border: 1px solid #ddd;
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }

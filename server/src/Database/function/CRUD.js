@@ -7,7 +7,7 @@ let insertData = async (tableName, data) => {
 
     // Extract column names from the first object in the data array
     const columns = Object.keys(data);
-    console.log(columns);
+
     // Construct the SQL query to insert data into the table
     const sqlQuery = `INSERT INTO ${tableName} (${columns.join(
       ", "
@@ -16,8 +16,6 @@ let insertData = async (tableName, data) => {
     // Extract values from each object in the data array
     const values = columns.map((col) => data[col]);
     // Log the SQL query for debugging purposes
-    console.log("SQL Query:", sqlQuery);
-    console.log("Values to Insert:", values);
 
     // Execute the SQL query to insert data
     const result = await new Promise((resolve, reject) => {
@@ -26,7 +24,7 @@ let insertData = async (tableName, data) => {
           console.error("Query Error:", queryErr);
           reject(queryErr);
         } else {
-          console.log("Insert Results:", results);
+          // console.log("Insert Results:", results);
           resolve(results);
         }
       });
@@ -55,7 +53,7 @@ let getdata = async (tableName) => {
           reject(err);
         }
 
-        console.log(result);
+        // console.log(result);
         resolve(result);
       });
     });
@@ -129,82 +127,110 @@ let getUserByEmail = async (email) => {
 let getCourse = async (input) => {
   try {
     const connection = await getConnection();
-    if (input.length == 6) {
-      const sqlQuery = `SELECT * FROM subjects WHERE subject_code = ?`;
-      const results = await new Promise((resolve, reject) => {
-        try {
-          connection.query(sqlQuery, [input], function (err, result, fields) {
+    // if (input.length == 6) {
+    //   const sqlQuery = `SELECT * FROM subjects WHERE subject_code = ?`;
+    //   const results = await new Promise((resolve, reject) => {
+    //     try {
+    //       connection.query(sqlQuery, [input], function (err, result, fields) {
+    //         if (err) {
+    //           connection.release();
+    //           reject(err);
+    //         }
+    //         resolve(result);
+    //       });
+    //     } catch (e) {
+    //       console.log(e);
+    //     }
+    //   });
+    //   connection.release();
+
+    //   return results;
+    // } else {
+    //   const sqlQuery = `SELECT * FROM subjects WHERE subject_name = ?`;
+    //   const results = await new Promise((resolve, reject) => {
+    //     try {
+    //       connection.query(sqlQuery, [input], function (err, result, fields) {
+    //         if (err) {
+    //           connection.release();
+    //           reject(err);
+    //         }
+    //         resolve(result);
+    //       });
+    //     } catch (e) {
+    //       console.log(e);
+    //     }
+    //   });
+    //   connection.release();
+
+    //   return results;
+    // }
+    const sqlQuery = `SELECT *
+    FROM subjects
+    WHERE subject_code LIKE ? OR subject_name LIKE ?`;
+    const results = await new Promise((resolve, reject) => {
+      try {
+        connection.query(
+          sqlQuery,
+          [`%${input}%`, `%${input}%`],
+          function (err, result, fields) {
             if (err) {
               connection.release();
               reject(err);
             }
             resolve(result);
-          });
-        } catch (e) {
-          console.log("here")
-          console.log(e);
-        }
+          }
+        );
+      } catch (e) {
+        console.log(e);
+      }
+    });
+    connection.release();
 
-      });
-      connection.release();
-
-      return results;
-    } else {
-      const sqlQuery = `SELECT * FROM subjects WHERE subject_name = ?`;
-      const results = await new Promise((resolve, reject) => {
-        try {
-          connection.query(sqlQuery, [input], function (err, result, fields) {
-            if (err) {
-              connection.release();
-              reject(err);
-            }
-            resolve(result);
-          });
-        } catch (e) {
-          console.log("here")
-          console.log(e);
-        }
-
-      });
-      connection.release();
-
-      return results;
-    }
-
+    return results;
   } catch (error) {
     throw new Error("Error during data retrieval:", error);
   }
-}
+};
 let chooseCourse = async (course, userinfo) => {
   try {
     const connection = await getConnection();
-    const sqlQuery = `INSERT INTO registerpharse1 (student_id, subject_code, semester_id, action) VALUE (?)`;
-    const input = [userinfo.MSSV, course.subject_code, "231", "INSERT"]
+    let subject_code = course.subject_code;
+    const sqlQuery = `INSERT INTO registerpharse1 (student_id, subject_code, semester_id, action) VALUES (?)`;
+    const input = [userinfo.MSSV, subject_code, "231", "INSERT"];
+
     const results = await new Promise((resolve, reject) => {
-      try {
-        connection.query(sqlQuery, [input], function (err, result, fields) {
-          if (err) {
+      connection.query(sqlQuery, [input], function (err, result, fields) {
+        if (err) {
+          if (err.code === "ER_SIGNAL_EXCEPTION") {
+            // Resolve the promise with the trigger error message
+            console.error(err.message);
+            resolve({ errCode: 1, errMessage: err.message });
+          } else {
+            // Reject the promise with other database errors
+            console.error(err);
             connection.release();
             reject(err);
           }
-          resolve(result);
-        });
-      } catch (e) {
-        console.log(e);
-      }
-
+        } else {
+          // Resolve the promise with the successful result
+          resolve({ errCode: 0, result });
+        }
+      });
     });
+
     connection.release();
     return results;
   } catch (error) {
     console.log("Error during data retrieval:", error);
   }
-}
+};
 let getListRegiter = async (userid) => {
   try {
     const connection = await getConnection();
-    const sqlQuery = `SELECT * FROM registerpharse1 WHERE student_id = ?`;
-    const input = [userid]
+    const sqlQuery = `SELECT * FROM registerpharse1 rp
+      JOIN subjects s ON rp.subject_code = s.subject_code
+      WHERE student_id = ?`;
+    const input = [userid];
     const results = await new Promise((resolve, reject) => {
       try {
         connection.query(sqlQuery, [input], function (err, result, fields) {
@@ -217,14 +243,13 @@ let getListRegiter = async (userid) => {
       } catch (e) {
         console.log(e);
       }
-
     });
     connection.release();
     return results;
   } catch (error) {
     console.log("Error during data retrieval:", error);
   }
-}
+};
 module.exports = {
   insertData,
   getdata,

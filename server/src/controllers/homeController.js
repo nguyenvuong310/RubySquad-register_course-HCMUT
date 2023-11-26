@@ -42,26 +42,6 @@ let readCRUD = async (req, res) => {
   });
 };
 
-// let editCRUD = async (req, res) => {
-//   let userId = req.query.id;
-//   // check Useid is found ??
-//   if (userId) {
-//     let userData = await userService.getUserInforById(userId);
-
-//     return res.render("editCRUD.ejs", {
-//       valueUserData: userData,
-//     });
-//   } else {
-//     return res.send("User not found!");
-//   }
-// };
-
-// let putCRUD = async (req, res) => {
-//   let data = req.body;
-//   await userService.updateUserData(data);
-//   return res.send("update done!");
-// };
-
 let delCRUD = async (req, res) => {
   let id = req.query.id;
   console.log(id);
@@ -104,14 +84,14 @@ let handleSearchCourse = async (req, res) => {
     return res.status(200).json({
       errCode: 0,
       errMessage: "Course exit",
-      course
-    })
+      course,
+    });
   } else {
     return res.status(200).json({
       errCode: 1,
       errMessage: "Course not exit",
-      course: []
-    })
+      course: [],
+    });
   }
 };
 
@@ -124,24 +104,12 @@ let handleChooseCourse = async (req, res) => {
       message: "Missing Inputs parameter!!",
     });
   }
-  await userService.handleChooseCourseService(course, userinfo);
-  if (course) {
-    return res.status(200).json({
-      errCode: 0,
-      errMessage: "Course exit",
-      course
-    })
-  } else {
-    return res.status(200).json({
-      errCode: 1,
-      errMessage: "Course not exit",
-      course: []
-    })
-  }
+  let response = await userService.handleChooseCourseService(course, userinfo);
+  return res.status(200).json(response);
 };
 
 let handleGetListRegister = async (req, res) => {
-  let userid = req.body.userinfo.MSSV;
+  let userid = req.body.mssv;
   if (!userid) {
     return res.status(200).json({
       errCode: 1,
@@ -152,14 +120,14 @@ let handleGetListRegister = async (req, res) => {
   if (data) {
     return res.status(200).json({
       errCode: 0,
-      data
-    })
+      data,
+    });
   } else {
     return res.status(200).json({
       errCode: 1,
       errMessage: "Can't get list register course",
-      data: []
-    })
+      data: [],
+    });
   }
 };
 module.exports = {
