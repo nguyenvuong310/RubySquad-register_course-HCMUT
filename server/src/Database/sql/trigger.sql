@@ -1,6 +1,6 @@
 DELIMITER //
 
-CREATE TRIGGER before_insert_check_duplicate
+CREATE TRIGGER check_insert_registerpharse1
 BEFORE INSERT ON registerpharse1
 FOR EACH ROW
 BEGIN
@@ -54,6 +54,27 @@ BEGIN
   IF class_count > 0 THEN
     SIGNAL SQLSTATE '45000'
     SET MESSAGE_TEXT = 'Duplicate entry for class';
+  END IF;
+END;
+//
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER check_insert_user
+BEFORE INSERT ON Users
+FOR EACH ROW
+BEGIN
+  DECLARE user_count INT;
+
+  SELECT COUNT(*)
+  INTO user_count
+  FROM Users -- Replace your_table with the actual name of your table
+  WHERE email = NEW.email OR MSSV = NEW.MSSV;
+
+  IF user_count > 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Duplicate entry for user';
   END IF;
 END;
 //

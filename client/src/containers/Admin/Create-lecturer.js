@@ -4,8 +4,8 @@ import { connect } from "react-redux";
 import NavAdmin from "./navAdmin";
 import "react-image-lightbox/style.css";
 import { toast } from "react-toastify";
-import { createStudentService } from "../../services/userService";
-class CreateStudent extends Component {
+import { createLecturerService } from "../../services/userService";
+class CreateLecturer extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,7 +16,8 @@ class CreateStudent extends Component {
       address: "",
       birthday: "",
       sex: "1",
-      yearStartLearn: "",
+      position: "",
+      level: "",
     };
   }
 
@@ -32,7 +33,8 @@ class CreateStudent extends Component {
       "address",
       "birthday",
       "sex",
-      "yearStartLearn",
+      "position",
+      "level",
     ];
     for (let i = 0; i < arrInput.length; i++) {
       if (!this.state[arrInput[i]]) {
@@ -43,10 +45,10 @@ class CreateStudent extends Component {
     }
     return isValid;
   };
-  handleCreateStudent = async () => {
+  handleCreateLecturer = async () => {
     let isValid = this.checkValidInput();
     if (isValid) {
-      let res = await createStudentService({
+      let res = await createLecturerService({
         email: this.state.email,
         password: this.state.password,
         name: this.state.name,
@@ -54,10 +56,11 @@ class CreateStudent extends Component {
         address: this.state.address,
         birthday: this.state.birthday,
         sex: this.state.sex,
-        yearStartLearn: this.state.yearStartLearn,
+        position: this.state.position,
+        level: this.state.level,
       });
       if (res && res.errCode === 0) {
-        toast.success("Tạo student thành công", {
+        toast.success("Tạo lecturer thành công", {
           position: "top-right",
           autoClose: 1000,
           hideProgressBar: false,
@@ -187,10 +190,32 @@ class CreateStudent extends Component {
                     }
                   />
                 </div>
+                <div className="col-6">
+                  <label className="title">level</label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    value={this.state.level}
+                    onChange={(event) =>
+                      this.handleOnChangeInput(event, "level")
+                    }
+                  />
+                </div>
+                <div className="col-6">
+                  <label className="title">position</label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    value={this.state.position}
+                    onChange={(event) =>
+                      this.handleOnChangeInput(event, "position")
+                    }
+                  />
+                </div>
                 <div className="col-2 mt-5">
                   <button
                     className="btn btn-primary px-3"
-                    onClick={() => this.handleCreateStudent()}
+                    onClick={() => this.handleCreateLecturer()}
                   >
                     <i className="fas fa-plus"></i>
                     Add new users
@@ -213,4 +238,4 @@ const mapDispatchToProps = (dispatch) => {
   return {};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateStudent);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateLecturer);

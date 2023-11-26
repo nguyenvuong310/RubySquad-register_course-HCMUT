@@ -20,6 +20,7 @@ let initWebRoutes = (app) => {
     "/api/create-class-phase-1",
     homeController.handleCreateClassRegisterPhase1
   );
+  router.get("/api/get-list-student", homeController.handleGetList);
   return app.use("/", router);
 };
 module.exports = initWebRoutes;

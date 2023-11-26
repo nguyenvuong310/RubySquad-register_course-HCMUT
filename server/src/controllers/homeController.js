@@ -16,24 +16,37 @@ let getLecturer = (req, res) => {
 };
 let postStudent = async (req, res) => {
   // let yearStartLearn = req.body.yearStartLearn;
-  let response1 = await userService.createNewUser("users", req.body);
-  let dataInsertToTableStudent = {
-    id: response1.insertId,
-    yearStartLearn: req.body.yearStartLearn,
-  };
-  let response2 = await CRUD.insertData("students", dataInsertToTableStudent);
-  return res.send("server met");
+  let data = req.body.data;
+  let response1 = await userService.createNewUser("users", data);
+  if (response1.errCode === 0) {
+    let dataInsertToTableStudent = {
+      id: data.mssv,
+      yearStartLearn: data.yearStartLearn,
+    };
+    let response2 = await CRUD.insertData("students", dataInsertToTableStudent);
+    return res.status(200).json(response2);
+  } else {
+    return res.status(200).json(response1);
+  }
 };
 let postLecturer = async (req, res) => {
   // let yearStartLearn = req.body.yearStartLearn;
-  let response1 = await userService.createNewUser("users", req.body);
+  let data = req.body.data;
+  let response1 = await userService.createNewUser("users", data);
   let dataInsertToTableLecturer = {
-    id: response1.insertId,
-    level: req.body.level,
-    position: req.body.position,
+    id: data.mssv,
+    level: data.level,
+    position: data.position,
   };
-  let response2 = await CRUD.insertData("lecturers", dataInsertToTableLecturer);
-  return res.send("server met");
+  if (response1.errCode === 0) {
+    let response2 = await CRUD.insertData(
+      "lecturers",
+      dataInsertToTableLecturer
+    );
+    return res.status(200).json(response2);
+  } else {
+    return res.status(200).json(response1);
+  }
 };
 let readCRUD = async (req, res) => {
   let data = await userService.getAllUser();
@@ -146,6 +159,18 @@ let handleCreateClassRegisterPhase1 = async (req, res) => {
   let response = await CRUD.createClass();
   return res.status(200).json(response);
 };
+let handleGetList = async (req, res) => {
+  let tableName = req.query.tableName;
+  console.log(tableName);
+  let response = await CRUD.getList(tableName);
+  if (response) {
+    return res
+      .status(200)
+      .json({ errCode: 0, errMessage: "get list succeed", data: response });
+  } else {
+    return res.status(200).json({ errCode: 0, errMessage: "get list failed" });
+  }
+};
 module.exports = {
   postStudent,
   getStudent,
@@ -160,4 +185,5 @@ module.exports = {
   handleCancelCourse,
   handleGetListRegister,
   handleCreateClassRegisterPhase1,
+  handleGetList,
 };

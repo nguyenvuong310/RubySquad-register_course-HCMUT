@@ -21,19 +21,25 @@ let insertData = async (tableName, data) => {
     const result = await new Promise((resolve, reject) => {
       connection.query(sqlQuery, [values], (queryErr, results) => {
         if (queryErr) {
-          console.error("Query Error:", queryErr);
-          reject(queryErr);
+          if (queryErr.code === "ER_SIGNAL_EXCEPTION") {
+            // Resolve the promise with the trigger error message
+            console.error(queryErr.message);
+            resolve({ errCode: 1, errMessage: queryErr.message });
+          } else {
+            // Reject the promise with other database errors
+            console.error(queryErr);
+            connection.release();
+            reject(queryErr);
+          }
         } else {
           // console.log("Insert Results:", results);
-          resolve(results);
+          resolve({ errCode: 0, errMessage: "succeed", results });
         }
       });
     });
 
     // Release the connection back to the pool
     await connection.release();
-
-    console.log("Data inserted successfully");
     return result;
   } catch (error) {
     console.error("Error during data insertion:", error);
@@ -325,6 +331,30 @@ let createClass = async () => {
     console.log("Error during create class:", error);
   }
 };
+let getList = async (tableName) => {
+  try {
+    console.log(tableName);
+    const connection = await getConnection();
+    const sqlQuery = `SELECT * FROM users u JOIN ${tableName} s WHERE u.MSSV = s.id`;
+    // const input = [userinfo.MSSV, subject_code, "231", "DELETE"];
+    const results = await new Promise((resolve, reject) => {
+      connection.query(sqlQuery, function (err, result, fields) {
+        if (err) {
+          // Reject the promise with other database errors
+          console.error(err);
+          connection.release();
+        } else {
+          // Resolve the promise with the successful result
+          resolve(result);
+        }
+      });
+    });
+    connection.release();
+    return results;
+  } catch (error) {
+    console.log("Error during create class:", error);
+  }
+};
 module.exports = {
   insertData,
   getdata,
@@ -335,4 +365,5 @@ module.exports = {
   getListRegiter,
   cancelCourse,
   createClass,
+  getList,
 };

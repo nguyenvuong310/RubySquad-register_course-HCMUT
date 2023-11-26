@@ -43,10 +43,30 @@ const handleCancelCourse = async (course, userinfo) => {
     console.log(error);
   }
 };
+const createStudentService = async (data) => {
+  try {
+    return axios.post("/post-student", { data: data });
+  } catch (error) {
+    console.log(error);
+  }
+};
+const createLecturerService = async (data) => {
+  try {
+    return axios.post("/post-lecturer", { data: data });
+  } catch (error) {
+    console.log(error);
+  }
+};
+const getList = (role) => {
+  return axios.get(`/api/get-list-student?tableName=${role}`);
+};
 export {
   handleLoginApi,
   handleSearchCourseService,
   handleChooseCourseService,
   getListRegisterService,
   handleCancelCourse,
+  createStudentService,
+  getList,
+  createLecturerService,
 };

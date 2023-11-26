@@ -21,6 +21,9 @@ import RegPageSelection from "./Student/RegPageSelection";
 import CustomScrollbars from "../components/CustomScrollbars";
 import RegPageForm from "./Student/RegPageForm";
 import CreateStudent from "./Admin/Create-student";
+import ListStudent from "./Admin/List-student";
+import ListLecturer from "./Admin/List-Lecturer";
+import CreateLecturer from "./Admin/Create-lecturer";
 class App extends Component {
   handlePersistorState = () => {
     const { persistor } = this.props;
@@ -78,6 +81,18 @@ class App extends Component {
                   <Route
                     path={"/manage/create-student"}
                     component={CreateStudent}
+                  />
+                  <Route
+                    path={"/manage/list-student"}
+                    component={ListStudent}
+                  />
+                  <Route
+                    path={"/manage/list-lecturer"}
+                    component={ListLecturer}
+                  />
+                  <Route
+                    path={"/manage/create-lecturer"}
+                    component={CreateLecturer}
                   />
                 </Switch>
               </CustomScrollbars>

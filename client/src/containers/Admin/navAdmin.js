@@ -13,12 +13,38 @@ function NavAdmin() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/manage/create-student" className="title-admin">
-              Student
-            </Nav.Link>
-            <Nav.Link href="#link" className="title-admin">
-              Lecturer
-            </Nav.Link>
+            <NavDropdown
+              title="Student"
+              id="basic-nav-dropdown"
+              className="title-admin"
+            >
+              <NavDropdown.Item
+                href="/manage/create-student"
+                className="title-admin"
+              >
+                Create Student
+              </NavDropdown.Item>
+              <NavDropdown.Item href="/manage/list-student">
+                List Student
+              </NavDropdown.Item>
+
+              {/* <NavDropdown.Divider /> */}
+              {/* <NavDropdown.Item href="#action/3.4"></NavDropdown.Item> */}
+            </NavDropdown>
+            <NavDropdown
+              title="Lecturer"
+              id="basic-nav-dropdown"
+              className="title-admin"
+            >
+              <NavDropdown.Item href="/manage/create-lecturer">
+                Create Lecturer
+              </NavDropdown.Item>
+              <NavDropdown.Item href="/manage/list-lecturer">
+                List Lecturer
+              </NavDropdown.Item>
+              {/* <NavDropdown.Divider /> */}
+              {/* <NavDropdown.Item href="#action/3.4"></NavDropdown.Item> */}
+            </NavDropdown>
             <Nav.Link href="#link1" className="title-admin">
               Thời khóa biểu
             </Nav.Link>
