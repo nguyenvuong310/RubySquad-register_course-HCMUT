@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS Prerequisite_Subejct (
 
 CREATE TABLE IF NOT EXISTS Classes (
   class_id SERIAL PRIMARY KEY,
-  class_name INTEGER,
+  class_name VARCHAR(255),
   is_lab BOOLEAN,
   max_slot INTEGER,
   subject_code VARCHAR(255),

@@ -33,9 +33,20 @@ const getListRegisterService = async (mssv) => {
     console.log(error);
   }
 };
+const handleCancelCourse = async (course, userinfo) => {
+  try {
+    return axios.post("/api/cancelCourse", {
+      course: course,
+      userinfo: userinfo,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 export {
   handleLoginApi,
   handleSearchCourseService,
   handleChooseCourseService,
   getListRegisterService,
+  handleCancelCourse,
 };

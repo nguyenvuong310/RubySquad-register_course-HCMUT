@@ -166,7 +166,7 @@ let getCourse = async (input) => {
     // }
     const sqlQuery = `SELECT *
     FROM subjects
-    WHERE subject_code LIKE ? OR subject_name LIKE ?`;
+    WHERE (subject_code LIKE ? OR subject_name LIKE ?) AND credits > 0`;
     const results = await new Promise((resolve, reject) => {
       try {
         connection.query(
@@ -227,9 +227,21 @@ let chooseCourse = async (course, userinfo) => {
 let getListRegiter = async (userid) => {
   try {
     const connection = await getConnection();
-    const sqlQuery = `SELECT * FROM registerpharse1 rp
-      JOIN subjects s ON rp.subject_code = s.subject_code
-      WHERE student_id = ?`;
+    const sqlQuery = `
+    SELECT
+    rp.semester_id,
+    rp.subject_code,
+    s.subject_name,
+    s.credits
+FROM
+    registerpharse1 rp
+    JOIN subjects s ON rp.subject_code = s.subject_code
+WHERE
+    rp.student_id = ?
+    AND rp.semester_id = 231
+GROUP BY rp.semester_id, rp.subject_code, s.subject_name, s.credits
+HAVING SUM(CASE WHEN rp.action = 'INSERT' THEN 1 ELSE 0 END) > SUM(CASE WHEN rp.action = 'DELETE' THEN 1 ELSE 0 END);
+`;
     const input = [userid];
     const results = await new Promise((resolve, reject) => {
       try {
@@ -250,6 +262,69 @@ let getListRegiter = async (userid) => {
     console.log("Error during data retrieval:", error);
   }
 };
+let cancelCourse = async (course, userinfo) => {
+  try {
+    const connection = await getConnection();
+    let subject_code = course.subject_code;
+    const sqlQuery = `INSERT INTO registerpharse1 (student_id, subject_code, semester_id, action) VALUES (?)`;
+    const input = [userinfo.MSSV, subject_code, "231", "DELETE"];
+
+    const results = await new Promise((resolve, reject) => {
+      connection.query(sqlQuery, [input], function (err, result, fields) {
+        if (err) {
+          if (err.code === "ER_SIGNAL_EXCEPTION") {
+            // Resolve the promise with the trigger error message
+            console.error(err.message);
+            resolve({ errCode: 1, errMessage: err.message });
+          } else {
+            // Reject the promise with other database errors
+            console.error(err);
+            connection.release();
+            reject(err);
+          }
+        } else {
+          // Resolve the promise with the successful result
+          resolve({ errCode: 0, result });
+        }
+      });
+    });
+
+    connection.release();
+    return results;
+  } catch (error) {
+    console.log("Error during data retrieval:", error);
+  }
+};
+let createClass = async () => {
+  try {
+    const connection = await getConnection();
+    const sqlQuery = `CALL createClass('231', 'MT1003')`;
+    // const input = [userinfo.MSSV, subject_code, "231", "DELETE"];
+    const results = await new Promise((resolve, reject) => {
+      connection.query(sqlQuery, function (err, result, fields) {
+        if (err) {
+          if (err.code === "ER_SIGNAL_EXCEPTION") {
+            // Resolve the promise with the trigger error message
+            console.error(err.message);
+            resolve({ errCode: 1, errMessage: err.message });
+          } else {
+            // Reject the promise with other database errors
+            console.error(err);
+            connection.release();
+            reject(err);
+          }
+        } else {
+          // Resolve the promise with the successful result
+          resolve({ errCode: 0, errMessage: "create class succeed" });
+        }
+      });
+    });
+    connection.release();
+    return results;
+  } catch (error) {
+    console.log("Error during create class:", error);
+  }
+};
 module.exports = {
   insertData,
   getdata,
@@ -258,4 +333,6 @@ module.exports = {
   getCourse,
   chooseCourse,
   getListRegiter,
+  cancelCourse,
+  createClass,
 };

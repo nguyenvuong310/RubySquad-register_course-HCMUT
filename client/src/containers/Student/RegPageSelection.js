@@ -290,7 +290,11 @@ class RegPageSelection extends Component {
                           </div>
                         </div>
                       </div>
-                      <TableRegister listregister={this.state.listregister} />
+                      <TableRegister
+                        listregister={this.state.listregister}
+                        userInfor={this.props.userInfor}
+                        getListRegister={this.getListRegister}
+                      />
                     </div>
                   </div>
                 </div>

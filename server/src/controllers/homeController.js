@@ -130,6 +130,22 @@ let handleGetListRegister = async (req, res) => {
     });
   }
 };
+let handleCancelCourse = async (req, res) => {
+  let course = req.body.course;
+  let userinfo = req.body.userinfo;
+  if (!course || !userinfo) {
+    return res.status(200).json({
+      errCode: 1,
+      message: "Missing Inputs parameter!!",
+    });
+  }
+  let response = await CRUD.cancelCourse(course, userinfo);
+  return res.status(200).json(response);
+};
+let handleCreateClassRegisterPhase1 = async (req, res) => {
+  let response = await CRUD.createClass();
+  return res.status(200).json(response);
+};
 module.exports = {
   postStudent,
   getStudent,
@@ -141,5 +157,7 @@ module.exports = {
   postLecturer,
   handleSearchCourse,
   handleChooseCourse,
+  handleCancelCourse,
   handleGetListRegister,
+  handleCreateClassRegisterPhase1,
 };

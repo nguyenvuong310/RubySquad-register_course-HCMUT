@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
 import "./RegPageSelection";
-
+import { handleCancelCourse } from "../../services/userService";
+import { toast } from "react-toastify";
 class TableRegister extends Component {
   constructor(props) {
     super(props);
@@ -22,6 +23,22 @@ class TableRegister extends Component {
       });
     }
   }
+  handleDelete = async (subject) => {
+    let res = await handleCancelCourse(subject, this.props.userInfor);
+    if (res && res.errCode === 0) {
+      toast.info("Hủy môn thành công", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      this.props.getListRegister();
+    }
+  };
   render() {
     const { listregister } = this.state;
     return (
@@ -52,13 +69,16 @@ class TableRegister extends Component {
                       <div className="selec-response-box-body-content-table">
                         <div className="selec-response-box-body-content-subject-name">
                           <div className="row">
-                            <div className="col-md-1">1</div>
+                            <div className="col-md-1">{index + 1}</div>
                             <div className="col-md-9">
                               {subject.subject_code} - {subject.subject_name}
                             </div>
-                            <div className="col-md-1">2</div>
+                            <div className="col-md-1">{subject.credits}</div>
                             <div className="col-md-1">
-                              <button className="btn">
+                              <button
+                                className="btn"
+                                onClick={() => this.handleDelete(subject)}
+                              >
                                 <i
                                   className="fa fa-trash"
                                   aria-hidden="true"
@@ -82,8 +102,8 @@ class TableRegister extends Component {
                                 <th>#</th>
                               </tr>
                               <tr style={{ borderBottom: "2px #ccc  solid" }}>
-                                <td className="item_list">1728/20000 </td>
-                                <td className="item_list">V </td>
+                                <td className="item_list">N </td>
+                                <td className="item_list">20/5000</td>
                                 <td className="item_list">N--- </td>
                                 <td className="item_list">
                                   <i>"Chưa/Đang phân công"</i>{" "}
@@ -145,94 +165,6 @@ class TableRegister extends Component {
                         </div>
                       </div>
                     ))}
-                  {/* <div className="selec-response-box-body-content-table">
-                    <div className="selec-response-box-body-content-subject-name">
-                      <div className="row">
-                        <div className="col-md-1">1</div>
-                        <div className="col-md-9">
-                          SP1037 - Tư tưởng Hồ Chí Minh
-                        </div>
-                        <div className="col-md-1">2</div>
-                        <div className="col-md-1">
-                          <button className="btn">
-                            <i className="fa fa-trash" aria-hidden="true"></i>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="selec-response-box-body-content-subject-detail">
-                      <table width="100%">
-                        <tbody>
-                          <tr>
-                            <th>Nhóm lớp</th>
-                            <th>DK/Sĩ số</th>
-                            <th>Ngôn ngữ</th>
-                            <th>Nhóm LT</th>
-                            <th>Giảng viên</th>
-                            <th>Nhóm BT</th>
-                            <th>Giảng viên BT/TN</th>
-                            <th>Sĩ số LT</th>
-                            <th>#</th>
-                          </tr>
-                          <tr style={{ borderBottom: "2px #ccc  solid" }}>
-                            <td className="item_list">1728/20000 </td>
-                            <td className="item_list">V </td>
-                            <td className="item_list">N--- </td>
-                            <td className="item_list">
-                              <i>"Chưa/Đang phân công"</i>{" "}
-                            </td>
-                            <td className="item_list"> </td>
-                            <td className="item_list"> </td>
-                            <td className="item_list"> </td>
-                            <td className="item_list "> </td>
-                          </tr>
-                          <tr>
-                            <td />
-                            <td colSpan={9}>
-                              <table width="100%" className="table">
-                                <tbody>
-                                  <tr
-                                    className="bg"
-                                    style={{ borderBottom: "2px #ccc  solid" }}
-                                  >
-                                    <th>
-                                      <em>Thứ</em>
-                                    </th>
-                                    <th>
-                                      <em>Tiết</em>
-                                    </th>
-                                    <th>
-                                      <em>Phòng</em>
-                                    </th>
-                                    <th>
-                                      <em>CS</em>
-                                    </th>
-                                    <th>
-                                      <em>BT/TN</em>
-                                    </th>
-                                    <th>
-                                      <em>Tuần học</em>
-                                    </th>
-                                  </tr>
-                                  <tr>
-                                    <td className="item_list">Chưa biết </td>
-                                    <td className="item_list">--</td>
-                                    <td className="item_list">------ </td>
-                                    <td className="item_list">DKNV </td>
-                                    <td className="item_list"> </td>
-                                    <td className="item_list">
-                                      1234567890123456--------------
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </td>
-                            <td />
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div> */}
                 </div>
               </div>
               {/* Chưa có môn học đăng ký! */}
@@ -247,6 +179,7 @@ class TableRegister extends Component {
 const mapStateToProps = (state) => {
   return {
     language: state.app.language,
+    userInfor: state.user.userInfo,
   };
 };
 

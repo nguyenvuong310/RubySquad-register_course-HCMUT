@@ -15,6 +15,11 @@ let initWebRoutes = (app) => {
   router.post("/api/searchcourse", homeController.handleSearchCourse);
   router.post("/api/choosecourse", homeController.handleChooseCourse);
   router.post("/api/getlistregister", homeController.handleGetListRegister);
+  router.post("/api/cancelCourse", homeController.handleCancelCourse);
+  router.post(
+    "/api/create-class-phase-1",
+    homeController.handleCreateClassRegisterPhase1
+  );
   return app.use("/", router);
 };
 module.exports = initWebRoutes;
