@@ -331,11 +331,14 @@ let createClass = async () => {
     console.log("Error during create class:", error);
   }
 };
-let getList = async (tableName) => {
+let getList = async (tableName, orderByField, sortOrder) => {
   try {
-    console.log(tableName);
+    // console.log(tableName);
     const connection = await getConnection();
-    const sqlQuery = `SELECT * FROM users u JOIN ${tableName} s WHERE u.MSSV = s.id`;
+    const sqlQuery = `SELECT * 
+    FROM users u 
+    JOIN ${tableName} s ON u.MSSV = s.id
+    ORDER BY ${orderByField} ${sortOrder};`;
     // const input = [userinfo.MSSV, subject_code, "231", "DELETE"];
     const results = await new Promise((resolve, reject) => {
       connection.query(sqlQuery, function (err, result, fields) {
@@ -355,6 +358,38 @@ let getList = async (tableName) => {
     console.log("Error during create class:", error);
   }
 };
+let searchList = async (tableName, input, orderByField, sortOrder) => {
+  try {
+    // console.log(tableName);
+    const connection = await getConnection();
+    const sqlQuery = `SELECT * 
+    FROM users u 
+    JOIN ${tableName} s ON u.MSSV = s.id
+    WHERE u.name LIKE ? OR u.email LIKE ? OR u.MSSV LIKE ?
+    ORDER BY ${orderByField} ${sortOrder};`;
+    // const input = [userinfo.MSSV, subject_code, "231", "DELETE"];
+    const results = await new Promise((resolve, reject) => {
+      connection.query(
+        sqlQuery,
+        [`%${input}%`, `%${input}%`, `%${input}%`],
+        function (err, result, fields) {
+          if (err) {
+            // Reject the promise with other database errors
+            console.error(err);
+            connection.release();
+          } else {
+            // Resolve the promise with the successful result
+            resolve(result);
+          }
+        }
+      );
+    });
+    connection.release();
+    return results;
+  } catch (error) {
+    console.log("Error during search:", error);
+  }
+};
 module.exports = {
   insertData,
   getdata,
@@ -366,4 +401,5 @@ module.exports = {
   cancelCourse,
   createClass,
   getList,
+  searchList,
 };

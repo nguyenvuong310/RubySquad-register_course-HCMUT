@@ -57,8 +57,15 @@ const createLecturerService = async (data) => {
     console.log(error);
   }
 };
-const getList = (role) => {
-  return axios.get(`/api/get-list-student?tableName=${role}`);
+const getList = (role, orderByField, sortOrder) => {
+  return axios.get(
+    `/api/get-list-student?tableName=${role}&orderByField=${orderByField}&sortOrder=${sortOrder}`
+  );
+};
+const searchList = (role, input, orderByField, sortOrder) => {
+  return axios.get(
+    `/api/search-list-student?tableName=${role}&input=${input}&sortOrder=${sortOrder}&orderByField=${orderByField}`
+  );
 };
 export {
   handleLoginApi,
@@ -69,4 +76,5 @@ export {
   createStudentService,
   getList,
   createLecturerService,
+  searchList,
 };

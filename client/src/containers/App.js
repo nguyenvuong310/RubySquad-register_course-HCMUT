@@ -24,6 +24,7 @@ import CreateStudent from "./Admin/Create-student";
 import ListStudent from "./Admin/List-student";
 import ListLecturer from "./Admin/List-Lecturer";
 import CreateLecturer from "./Admin/Create-lecturer";
+import Phase1 from "./Admin/phase1";
 class App extends Component {
   handlePersistorState = () => {
     const { persistor } = this.props;
@@ -94,6 +95,7 @@ class App extends Component {
                     path={"/manage/create-lecturer"}
                     component={CreateLecturer}
                   />
+                  <Route path={"/register/phase1"} component={Phase1} />
                 </Switch>
               </CustomScrollbars>
             </div>

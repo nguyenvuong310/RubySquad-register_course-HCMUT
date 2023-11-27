@@ -53,7 +53,7 @@ function NavAdmin() {
               id="basic-nav-dropdown"
               className="title-admin"
             >
-              <NavDropdown.Item href="#action/3.1">Đợt 1</NavDropdown.Item>
+              <NavDropdown.Item href="/register/phase1">Đợt 1</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">Đợt 2</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.3"> Đợt 3</NavDropdown.Item>
               {/* <NavDropdown.Divider /> */}

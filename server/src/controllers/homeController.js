@@ -161,8 +161,31 @@ let handleCreateClassRegisterPhase1 = async (req, res) => {
 };
 let handleGetList = async (req, res) => {
   let tableName = req.query.tableName;
-  console.log(tableName);
-  let response = await CRUD.getList(tableName);
+  let orderByField = req.query.orderByField;
+  let sortOrder = req.query.sortOrder;
+  // console.log(tableName);
+  let response = await CRUD.getList(tableName, orderByField, sortOrder);
+  // console.log(response);
+  if (response) {
+    return res
+      .status(200)
+      .json({ errCode: 0, errMessage: "get list succeed", data: response });
+  } else {
+    return res.status(200).json({ errCode: 0, errMessage: "get list failed" });
+  }
+};
+let handleSearchList = async (req, res) => {
+  let tableName = req.query.tableName;
+  let input = req.query.input;
+  let orderByField = req.query.orderByField;
+  let sortOrder = req.query.sortOrder;
+  // console.log(tableName);
+  let response = await CRUD.searchList(
+    tableName,
+    input,
+    orderByField,
+    sortOrder
+  );
   if (response) {
     return res
       .status(200)
@@ -186,4 +209,5 @@ module.exports = {
   handleGetListRegister,
   handleCreateClassRegisterPhase1,
   handleGetList,
+  handleSearchList,
 };
