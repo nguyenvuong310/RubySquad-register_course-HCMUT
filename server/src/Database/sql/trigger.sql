@@ -1,37 +1,50 @@
 DELIMITER //
 
-CREATE TRIGGER check_insert_registerpharse1
-BEFORE INSERT ON registerpharse1
+CREATE TRIGGER check_insert_registerphase1
+BEFORE INSERT ON registerphase1
 FOR EACH ROW
 BEGIN
   DECLARE insert_count INT;
   DECLARE delete_count INT;
+  DECLARE semester_exist INT;
 
-  -- Count the number of existing "INSERT" actions
+  -- Check if semester_id exists
   SELECT COUNT(*)
-  INTO insert_count
-  FROM registerpharse1
-  WHERE subject_code = NEW.subject_code
-    AND semester_id = NEW.semester_id
-    AND action = 'INSERT'
-    AND student_id = NEW.student_id;
+  INTO semester_exist
+  FROM semester
+  WHERE semester_id = NEW.semester_id;
 
-  -- Count the number of existing "DELETE" actions
-  SELECT COUNT(*)
-  INTO delete_count
-  FROM registerpharse1
-  WHERE subject_code = NEW.subject_code
-    AND semester_id = NEW.semester_id
-    AND action = 'DELETE'
-    AND student_id = NEW.student_id;
+  -- Check if it's a valid semester_id
+  IF semester_exist = 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Invalid semester_id. Semester does not exist.';
+  ELSE
+    -- Count the number of existing "INSERT" actions
+    SELECT COUNT(*)
+    INTO insert_count
+    FROM registerphase1
+    WHERE subject_code = NEW.subject_code
+      AND semester_id = NEW.semester_id
+      AND action = 'INSERT'
+      AND student_id = NEW.student_id;
 
-  -- Check if it's a valid operation
-  IF NEW.action = 'DELETE' AND insert_count - delete_count = 0 THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Cannot delete. The subject has not been delete.';
-  ELSEIF NEW.action = 'INSERT' AND insert_count - delete_count = 1 THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Cannot insert. The subject has already been inserted.';
+    -- Count the number of existing "DELETE" actions
+    SELECT COUNT(*)
+    INTO delete_count
+    FROM registerphase1
+    WHERE subject_code = NEW.subject_code
+      AND semester_id = NEW.semester_id
+      AND action = 'DELETE'
+      AND student_id = NEW.student_id;
+
+    -- Check if it's a valid operation
+    IF NEW.action = 'DELETE' AND insert_count - delete_count = 0 THEN
+      SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Cannot delete. The subject has not been deleted.';
+    ELSEIF NEW.action = 'INSERT' AND insert_count - delete_count = 1 THEN
+      SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Cannot insert. The subject has already been inserted.';
+    END IF;
   END IF;
 END;
 

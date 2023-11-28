@@ -3,7 +3,7 @@ import insertData from "./function/insertData";
 const initializeDatabase = async () => {
   try {
     await createTable();
-    await insertData();
+    //await insertData();
     console.log("init database succeed");
   } catch (error) {
     console.error("Error initializing database:", error);

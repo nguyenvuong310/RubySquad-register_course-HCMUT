@@ -4,7 +4,7 @@ const path = require("path");
 let checkInTable = async (tableName, id) => {
   try {
     let connection = await getConnection();
-    const Query = `SELECT * FROM ${tableName} WHERE id = ?`;
+    const Query = `SELECT * FROM ${tableName} WHERE MS = ?`;
 
     const Results = await new Promise((resolve, reject) => {
       connection.query(Query, [id], (queryErr, results) => {

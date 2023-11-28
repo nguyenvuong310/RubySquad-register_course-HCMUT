@@ -1,96 +1,122 @@
-CREATE TABLE IF NOT EXISTS Attends (
-  id SERIAL PRIMARY KEY,
-  student_id INTEGER,
-  class_id INTEGER,
-  score INTEGER,
-  action VARCHAR(255),
+CREATE TABLE IF NOT EXISTS Semester (
+  semester_id INTEGER not null PRIMARY KEY,
+  timestart TIMESTAMP NOT NULL,
+  semester_name VARCHAR(255),
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 );
-
-CREATE TABLE IF NOT EXISTS Dependents (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255),
-  relationship VARCHAR(255),
-  sex BOOLEAN,
-  student_id INTEGER,
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS Facultys (
-  faculty_id VARCHAR(255) PRIMARY KEY,
+  faculty_id VARCHAR(255) ,
+  f_name VARCHAR(255),
+  f_address VARCHAR(255),
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+  PRIMARY KEY(faculty_id)
+);
+CREATE TABLE IF NOT EXISTS Subjects (
+  subject_name VARCHAR(255) ,
+  subject_code VARCHAR(255),
+  study_period INTEGER,
+  credits INTEGER,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+  PRIMARY KEY (subject_code)
+);
+CREATE TABLE IF NOT EXISTS Prerequisite_Subejct (
+  id INTEGER not null PRIMARY KEY,
+  subject_code VARCHAR(255) not null,
+  prerequisite_subject_code VARCHAR(255),
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+  FOREIGN KEY (prerequisite_subject_code) REFERENCES Subjects(subject_code),
+  FOREIGN KEY (subject_code) REFERENCES Subjects(subject_code)
+);
+CREATE TABLE IF NOT EXISTS Open_at (
+  id int not null AUTO_INCREMENT PRIMARY KEY,
+  subject_code VARCHAR(255),
+  semester_id INTEGER,
+  FOREIGN KEY (semester_id) REFERENCES Semester(semester_id),
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+);  
+CREATE TABLE IF NOT EXISTS Users (
+  MS INT NOT NULL,
   name VARCHAR(255),
+  email VARCHAR(255),
+  password VARCHAR(255),
+  birthday DATE,
   address VARCHAR(255),
+  sex BOOLEAN,
+  faculty_id VARCHAR(255),
+  FOREIGN KEY (faculty_id) REFERENCES Facultys(faculty_id),
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+  PRIMARY KEY(MS)
 );
-
-CREATE TABLE IF NOT EXISTS InChargeOfs (
-  id SERIAL PRIMARY KEY,
-  class_id INTEGER,
-  lecturer_id INTEGER,
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS Lecturers (
-  id INTEGER PRIMARY KEY,
+  id int not null AUTO_INCREMENT PRIMARY KEY,
+  MS INT,
   level VARCHAR(255),
   position VARCHAR(255),
   supervisor_id INTEGER,
-  faculty_id INTEGER,
+  FOREIGN KEY (supervisor_id) REFERENCES Lecturers(MS),
+  FOREIGN KEY (MS) REFERENCES Users(MS),
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Teach(
+  id int not null AUTO_INCREMENT PRIMARY KEY,
+  subject_code VARCHAR(255),
+  FOREIGN KEY (subject_code) REFERENCES Subjects(subject_code),
+  lecturer_id INTEGER,
+  FOREIGN KEY (lecturer_id) REFERENCES Lecturers(id),
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Students (
-  id INTEGER PRIMARY KEY,
+  id int not null AUTO_INCREMENT PRIMARY KEY,
+  MS INT,
+  FOREIGN KEY (MS) REFERENCES Users(MS),
   yearStartLearn DATE,
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 );
-
-CREATE TABLE IF NOT EXISTS Users (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255),
-  email VARCHAR(255),
-  password VARCHAR(255),
-  MSSV INTEGER,
-  birthday DATE,
-  address VARCHAR(255),
+CREATE TABLE IF NOT EXISTS Dependents (
+  id int not null AUTO_INCREMENT PRIMARY KEY,
+  d_name VARCHAR(255),
+  relationship VARCHAR(255),
   sex BOOLEAN,
-  faculty_id INTEGER,
+  student_id INTEGER,
+  FOREIGN KEY (student_id) REFERENCES Students(MS),
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS RegisterPharse1 (
-  id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS RegisterPhase1 (
+  id int not null AUTO_INCREMENT PRIMARY KEY,
   student_id INTEGER,
+  FOREIGN KEY (student_id) REFERENCES Students(MS),
   subject_code VARCHAR(255),
+  FOREIGN KEY (subject_code) REFERENCES Subjects(subject_code),
   semester_id INTEGER,
+  FOREIGN KEY (semester_id) REFERENCES Semester(semester_id),
   action VARCHAR(255),
   time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Prerequisite_Subejct (
-  id SERIAL PRIMARY KEY,
-  subject_code VARCHAR(255),
-  prerequisite_subject_code VARCHAR(255),
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS Classes (
-  class_id SERIAL PRIMARY KEY,
+  class_id  int not null AUTO_INCREMENT PRIMARY KEY ,
   class_name VARCHAR(255),
   is_lab BOOLEAN,
   max_slot INTEGER,
   subject_code VARCHAR(255),
+  FOREIGN KEY (subject_code) REFERENCES Subjects(subject_code),
   semester_id INTEGER,
+  FOREIGN KEY (semester_id) REFERENCES Semester(semester_id),
   location VARCHAR(255),
   day INTEGER,
   lesson_start INTEGER,
@@ -99,39 +125,150 @@ CREATE TABLE IF NOT EXISTS Classes (
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 );
-
-CREATE TABLE IF NOT EXISTS Subjects (
-  subject_name VARCHAR(255) ,
-  subject_code VARCHAR(255) PRIMARY KEY,
-  study_period INTEGER,
-  credits INTEGER,
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS Teach(
-  id SERIAL PRIMARY KEY,
-  subject_code VARCHAR(255),
+CREATE TABLE IF NOT EXISTS InChargeOfs (
+  id int not null AUTO_INCREMENT PRIMARY KEY,
+  class_id INTEGER,
   lecturer_id INTEGER,
+  FOREIGN KEY (class_id) REFERENCES Classes(class_id),
+  FOREIGN KEY (lecturer_id) REFERENCES Lecturers(id),
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Open_at (
-  id SERIAL PRIMARY KEY,
-  subject_code VARCHAR(255),
-  semester_id INTEGER,
+CREATE TABLE IF NOT EXISTS Attends (
+  id int not null AUTO_INCREMENT,
+  student_id INTEGER NOT NULL,
+  class_id INTEGER NOT NULL,
+  score INTEGER,
+  action VARCHAR(255),
+  PRIMARY KEY (id),
+  FOREIGN KEY (class_id) REFERENCES Classes(class_id),
+  FOREIGN KEY (student_id) REFERENCES Students(MS),
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 );
-CREATE TABLE IF NOT EXISTS Semester (
-  id SERIAL PRIMARY KEY,
-  semester_id INTEGER,
-  timestart TIMESTAMP NOT NULL,
-  semester_name VARCHAR(255),
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
-);
+INSERT IGNORE  INTO Semester(semester_id, timestart, semester_name)
+VALUES 
+  (211, '2021-01-01', 'Hoc ki 1 nam 2021'),
+  (212, '2021-05-01', 'Hoc ki 2 nam 2021'),
+  (213, '2021-09-01', 'Hoc ki 3 nam 2021'),
+  (221, '2022-01-01', 'Hoc ki 1 nam 2022'),
+  (222, '2022-05-01', 'Hoc ki 2 nam 2022'),
+  (223, '2022-09-01', 'Hoc ki 3 nam 2022'),
+  (231, '2023-01-01', 'Hoc ki 1 nam 2023'),
+  (232, '2023-05-01', 'Hoc ki 2 nam 2023');
+INSERT IGNORE INTO Facultys (faculty_id, f_name, f_address)
+VALUES
+  ('BD', 'TT Đào tạo Bảo dưỡng Công nghiệp', 'A1'),
+  ('CK', 'Khoa Cơ khí', 'A2'),
+  ('DC', 'Khoa Kỹ thuật Địa chất và Dầu khí', 'B8'),
+  ('DD', 'Khoa Điện - Điện tử', 'A3'),
+  ('MT', 'Khoa Khoa học và Kỹ thuật máy tính', 'A4'),
+  ('HC', 'Khoa Kỹ thuật Hóa học', 'B2'),
+  ('QL', 'Khoa Quản lý Công nghiệp', 'B10'),
+  ('XD', 'Khoa Kỹ thuật Xây dưng', 'B6'),
+  ('MO', 'Khoa Môi trường và Tài nguyên', 'B9'),
+  ('GT', 'Khoa Kỹ thuật Giao thông', 'C5'),
+  ('KU', 'Khoa Khoa học Ứng dụng', 'B4'),
+  ('VL', 'Khoa Công nghệ Vật liệu', 'C4'),
+  ('KT', 'ngành Kiến trúc', 'A5'),
+  ('VP', 'Chương trình ĐTKS CLC - Việt Pháp', null),
+  ('CC', 'Chương trình chất lượng cao tiếng Anh', null),
+  ('CN', 'Chương trình chất lượng cao tiếng Nhật', null),
+  ('QT', 'Chương trình chuyển tiếp quốc tế', null),
+  ('TT', 'Chương trình tiên tiến', null);
+
+INSERT IGNORE INTO Subjects (subject_code, subject_name, credits, study_period)
+VALUES
+('CH1003', 'Hóa đại cương', 3, 2),
+('CH1004', 'Hóa đại cương', 0, 5),
+('CO1005', 'Nhập môn điện toán', 3, 2),
+('CO1006', 'Nhập môn điện toán', 0, 5),
+('CO1007', 'Cấu trúc rời rạc cho khoa học máy tính', 4, 2),
+('CO1023', 'Hệ thống số', 3, 2),
+('CO1024', 'Hệ thống số', 0, 5),
+('CO1027', 'Kĩ thuật lập trình', 3, 2),
+('CO1028', 'Kĩ thuật lập trình', 0, 5),
+('CO2001', 'Kỹ năng chuyên nghiệp cho kỹ sư', 3, 2),
+('CO2003', 'Cấu trúc dữ liệu và giải thuật', 4, 2),
+('CO2004', 'Cấu trúc dữ liệu và giải thuật', 0, 5),
+('CO2007', 'Kiến trúc máy tính', 4, 2),
+('CO2008', 'Kiến trúc máy tính', 0, 5),
+('CO2011', 'Mô hình hóa toán học', 3, 2),
+('CO2013', 'Hệ cơ sở dữ liệu', 4, 3),
+('CO2014', 'Hệ cơ sở dữ liệu', 0, 5),
+('CO2017', 'Hệ điều hành', 3, 2),
+('CO2018', 'Hệ điều hành', 0, 5),
+('CO2039', 'Lập trình nâng cao', 3, 2),
+('CO3001', 'Công nghệ phần mềm', 3, 2),
+('CO3005', 'Nguyên lý ngôn ngữ lập trình', 4, 2),
+('CO3006', 'Nguyên lý ngôn ngữ lập trình', 0, 5),
+('CO3011', 'Quản lý dự án phần mềm', 3, 2),
+('CO3012', 'Quản lý dự án phần mềm', 0, 5),
+('CO3013', 'Xây dựng chương trình dịch', 3, 2),
+('CO3015', 'Kiểm tra phần mềm', 3, 2),
+('CO3017', 'Kiến trúc phần mềm', 3, 2),
+('CO3021', 'Hệ quản trị cơ sở dữ liệu', 3, 2),
+('CO3022', 'Hệ quản trị cơ sở dữ liệu', 0, 5),
+('CO3023', 'Cơ sở dữ liệu phân tán và hướng đối tượng', 3, 2),
+('CO3027', 'Thương mại điện tử', 3, 2),
+('CO3029', 'Khai phá dữ liệu', 3, 2),
+('CO3031', 'Phân tích và thiết kế giải thuật', 3, 2),
+('CO3033', 'Bảo mật hệ thống thông tin', 3, 2),
+('CO3035', 'Hệ thời gian thực', 3, 2),
+('CO3037', 'Phát triển ứng dụng internet of things', 3, 2),
+('CO3041', 'Hệ thống thông minh', 3, 2),
+('CO3043', 'Phát triển ứng dụng trên thiết bị di động', 3, 2),
+('CO3045', 'Lập trình game', 3, 2),
+('CO3047', 'Mạng máy tính nâng cao', 3, 2),
+('CO3049', 'Lập trình web', 3, 2),
+('CO3051', 'Hệ thống thiết bị di động', 3, 2),
+('CO3057', 'Xử lý ảnh số và thị giác máy tính', 3, 2),
+('CO3059', 'Đồ họa máy tính', 3, 2),
+('CO3061', 'Nhập môn trí tuệ nhân tạo', 3, 2),
+('CO3065', 'Công nghệ phần mềm nâng cao', 3, 2),
+('CO3067', 'Tính toán song song', 3, 2),
+('CO3069', 'Mật mã và an ninh mạng', 3, 2),
+('CO3071', 'Hệ phân bố', 3, 2),
+('CO3083', 'Mật mã học và mã hóa thông tin', 3, 2),
+('CO3085', 'Xử lý ngôn ngữ tự nhiên', 3, 2),
+('CO3089', 'Những chủ đề nâng cao trong khoa học máy tính', 3, 2),
+('CO3093', 'Mạng máy tính', 3, 2),
+('CO3094', 'Mạng máy tính', 0, 5),
+('CO3115', 'Phân tích và thiết kế hệ thống', 3, 2),
+('CO3117', 'Học máy', 3, 2),
+('CO3335', 'Thực tập ngoài trường', 2, NULL),
+('CO4025', 'Mạng xã hội và thông tin', 3, 2),
+('CO4029', 'Đồ án chuyên ngành', 2, NULL),
+('CO4031', 'Kho dữ liệu và hệ hỗ trợ quyết định', 3, 2),
+('CO4033', 'Phân tích dữ liệu lớn và trí tuệ kinh doanh', 3, 2),
+('CO4035', 'Hệ hoạch định tài nguyên tổ chức', 3, 2),
+('CO4037', 'Hệ thống thông tin quản lý', 3, 2),
+('CO4039', 'Bảo mật sinh trắc', 3, 2),
+('CO4337', 'Đồ án tốt nghiệp (Khoa học Máy tính)', 4, NULL),
+('IM1025', 'Quản lý dự án cho kỹ sư', 3, 2),
+('IM1027', 'Kinh tế kỹ thuật', 3, 2),
+('IM3001', 'Quản trị kinh doanh cho kỹ sư', 3, 2),
+('MT1003', 'Giải tích 1', 4, 3),
+('MT1004', 'Giải tích 1', 0, 3),
+('MT1005', 'Giải tích 2', 4, 3),
+('MT1006', 'Giải tích 2', 0, 3),
+('MT1007', 'Đại số tuyến tính', 3, 2),
+('MT1008', 'Đại số tuyến tính', 0, 5),
+('MT2013', 'Xác suất và thống kê', 4, 3),
+('PH1003', 'Vật lý 1', 4, 2),
+('PH1004', 'Vật lý 1', 0, 5),
+('PH1007', 'Thí nghiệm vật lý', 1, 2),
+('SP1007', 'Pháp luật Việt Nam đại cương', 2, 2),
+('SP1031', 'Triết học Mác - Lênin', 3, 2),
+('SP1033', 'Kinh tế chính trị Mác - Lênin', 2, 2),
+('SP1035', 'Chủ nghĩa xã hội khoa học', 2, 2),
+('SP1037', 'Tư tưởng Hồ Chí Minh', 2, 2),
+('SP1039', 'Lịch sử Đảng Cộng sản Việt Nam', 2, 2);
+
+
+
+
 
 
 

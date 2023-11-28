@@ -77,8 +77,8 @@ class RegPageSelection extends Component {
     await this.getListRegister();
   };
   getListRegister = async () => {
-    if (this.props.userInfor && this.props.userInfor.MSSV) {
-      let res = await getListRegisterService(this.props.userInfor.MSSV);
+    if (this.props.userInfor && this.props.userInfor.MS) {
+      let res = await getListRegisterService(this.props.userInfor.MS);
       if (res && res.data) {
         this.setState({
           listregister: res.data,

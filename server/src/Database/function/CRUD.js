@@ -201,8 +201,8 @@ let chooseCourse = async (course, userinfo) => {
   try {
     const connection = await getConnection();
     let subject_code = course.subject_code;
-    const sqlQuery = `INSERT INTO registerpharse1 (student_id, subject_code, semester_id, action) VALUES (?)`;
-    const input = [userinfo.MSSV, subject_code, "231", "INSERT"];
+    const sqlQuery = `INSERT INTO registerphase1 (student_id, subject_code, semester_id, action) VALUES (?)`;
+    const input = [userinfo.MS, subject_code, "231", "INSERT"];
 
     const results = await new Promise((resolve, reject) => {
       connection.query(sqlQuery, [input], function (err, result, fields) {
@@ -231,33 +231,27 @@ let chooseCourse = async (course, userinfo) => {
   }
 };
 let getListRegiter = async (userid) => {
+  console.log(userid);
   try {
+    const semester_id = "231";
     const connection = await getConnection();
     const sqlQuery = `
-    SELECT
-    rp.semester_id,
-    rp.subject_code,
-    s.subject_name,
-    s.credits
-FROM
-    registerpharse1 rp
-    JOIN subjects s ON rp.subject_code = s.subject_code
-WHERE
-    rp.student_id = ?
-    AND rp.semester_id = 231
-GROUP BY rp.semester_id, rp.subject_code, s.subject_name, s.credits
-HAVING SUM(CASE WHEN rp.action = 'INSERT' THEN 1 ELSE 0 END) > SUM(CASE WHEN rp.action = 'DELETE' THEN 1 ELSE 0 END);
-`;
-    const input = [userid];
+    CALL GetRegisteredSubjects(?, ?)`;
+
     const results = await new Promise((resolve, reject) => {
       try {
-        connection.query(sqlQuery, [input], function (err, result, fields) {
-          if (err) {
-            connection.release();
-            reject(err);
+        connection.query(
+          sqlQuery,
+          [userid, semester_id],
+          function (err, result, fields) {
+            if (err) {
+              connection.release();
+              reject(err);
+            }
+            resolve(result[0]);
+            console.log(result);
           }
-          resolve(result);
-        });
+        );
       } catch (e) {
         console.log(e);
       }
@@ -272,8 +266,8 @@ let cancelCourse = async (course, userinfo) => {
   try {
     const connection = await getConnection();
     let subject_code = course.subject_code;
-    const sqlQuery = `INSERT INTO registerpharse1 (student_id, subject_code, semester_id, action) VALUES (?)`;
-    const input = [userinfo.MSSV, subject_code, "231", "DELETE"];
+    const sqlQuery = `INSERT INTO registerphase1 (student_id, subject_code, semester_id, action) VALUES (?)`;
+    const input = [userinfo.MS, subject_code, "231", "DELETE"];
 
     const results = await new Promise((resolve, reject) => {
       connection.query(sqlQuery, [input], function (err, result, fields) {
@@ -337,7 +331,8 @@ let getList = async (tableName, orderByField, sortOrder) => {
     const connection = await getConnection();
     const sqlQuery = `SELECT * 
     FROM users u 
-    JOIN ${tableName} s ON u.MSSV = s.id
+    JOIN ${tableName} s ON u.MS = s.MS
+    JOIN facultys f ON f.faculty_id = u.faculty_id
     ORDER BY ${orderByField} ${sortOrder};`;
     // const input = [userinfo.MSSV, subject_code, "231", "DELETE"];
     const results = await new Promise((resolve, reject) => {
@@ -348,6 +343,7 @@ let getList = async (tableName, orderByField, sortOrder) => {
           connection.release();
         } else {
           // Resolve the promise with the successful result
+          // console.log(result);
           resolve(result);
         }
       });
@@ -362,16 +358,13 @@ let searchList = async (tableName, input, orderByField, sortOrder) => {
   try {
     // console.log(tableName);
     const connection = await getConnection();
-    const sqlQuery = `SELECT * 
-    FROM users u 
-    JOIN ${tableName} s ON u.MSSV = s.id
-    WHERE u.name LIKE ? OR u.email LIKE ? OR u.MSSV LIKE ?
-    ORDER BY ${orderByField} ${sortOrder};`;
+    const sqlQuery =
+      tableName === "students" ? `CALL SearchStudent(?, ?, ?)` : ``;
     // const input = [userinfo.MSSV, subject_code, "231", "DELETE"];
     const results = await new Promise((resolve, reject) => {
       connection.query(
         sqlQuery,
-        [`%${input}%`, `%${input}%`, `%${input}%`],
+        [input, orderByField, sortOrder],
         function (err, result, fields) {
           if (err) {
             // Reject the promise with other database errors
@@ -379,10 +372,175 @@ let searchList = async (tableName, input, orderByField, sortOrder) => {
             connection.release();
           } else {
             // Resolve the promise with the successful result
-            resolve(result);
+            // console.log(result);
+            resolve(result[0]);
           }
         }
       );
+    });
+
+    connection.release();
+    return results;
+  } catch (error) {
+    console.log("Error during search:", error);
+  }
+};
+let createStudent = async (data) => {
+  try {
+    // console.log(tableName);
+    const connection = await getConnection();
+    const sqlQuery = `CALL InsertStudentData(?)`;
+    const columns = Object.keys(data);
+    const values = columns.map((col) => data[col]);
+    // const input = [userinfo.MSSV, subject_code, "231", "DELETE"];
+    const results = await new Promise((resolve, reject) => {
+      connection.query(sqlQuery, [values], function (err, result, fields) {
+        if (err) {
+          // Reject the promise with other database errors
+          if (err.code === "ER_SIGNAL_EXCEPTION") {
+            // Resolve the promise with the trigger error message
+            console.error(err.message);
+            resolve({ errCode: 1, errMessage: err.message });
+          } else {
+            // Reject the promise with other database errors
+            console.error(err);
+            connection.release();
+            reject(err);
+          }
+        } else {
+          // Resolve the promise with the successful result
+          resolve({
+            errCode: 0,
+            errMessage: "create student succeed",
+            result: result,
+          });
+        }
+      });
+    });
+    connection.release();
+    return results;
+  } catch (error) {
+    console.log("Error during search:", error);
+  }
+};
+let CreateLecturer = async (data) => {
+  try {
+    // console.log(tableName);
+    const connection = await getConnection();
+    const sqlQuery = `CALL InsertLecturerData(?)`;
+    const columns = Object.keys(data);
+    const values = columns.map((col) => data[col]);
+    // const input = [userinfo.MSSV, subject_code, "231", "DELETE"];
+    const results = await new Promise((resolve, reject) => {
+      connection.query(sqlQuery, [values], function (err, result, fields) {
+        if (err) {
+          // Reject the promise with other database errors
+          if (err.code === "ER_SIGNAL_EXCEPTION") {
+            // Resolve the promise with the trigger error message
+            console.error(err.message);
+            resolve({ errCode: 1, errMessage: err.message });
+          } else {
+            // Reject the promise with other database errors
+            console.error(err);
+            connection.release();
+            reject(err);
+          }
+        } else {
+          // Resolve the promise with the successful result
+          resolve({
+            errCode: 0,
+            errMessage: "create student succeed",
+            result: result,
+          });
+        }
+      });
+    });
+    connection.release();
+    return results;
+  } catch (error) {
+    console.log("Error during search:", error);
+  }
+};
+let upDateData = async (data, tableName) => {
+  try {
+    // console.log(tableName);
+
+    const connection = await getConnection();
+    const sqlQuery = "";
+    if (tableName === "students") {
+      sqlQuery = `CALL UpdateStudentData(?)`;
+    }
+    if (tableName === "lecturers") {
+      sqlQuery = `CALL UpdateLecturerData(?)`;
+    }
+    const columns = Object.keys(data);
+    const values = columns.map((col) => data[col]);
+    // const input = [userinfo.MSSV, subject_code, "231", "DELETE"];
+    const results = await new Promise((resolve, reject) => {
+      connection.query(sqlQuery, [values], function (err, result, fields) {
+        if (err) {
+          // Reject the promise with other database errors
+          if (err.code === "ER_SIGNAL_EXCEPTION") {
+            // Resolve the promise with the trigger error message
+            console.error(err.message);
+            resolve({ errCode: 1, errMessage: err.message });
+          } else {
+            // Reject the promise with other database errors
+            console.error(err);
+            connection.release();
+            reject(err);
+          }
+        } else {
+          // Resolve the promise with the successful result
+          resolve({
+            errCode: 0,
+            errMessage: "update student succeed",
+            result: result,
+          });
+        }
+      });
+    });
+    connection.release();
+    return results;
+  } catch (error) {
+    console.log("Error during search:", error);
+  }
+};
+let deleteData = async (mssv, tableName) => {
+  try {
+    // console.log(tableName);
+
+    const connection = await getConnection();
+    const sqlQuery =
+      tableName === "students"
+        ? `CALL DeleteStudentIfNoDependencies(?)`
+        : `CALL UpdateLecturerData(?)`;
+    // console.log(mssv);
+    // console.log(sqlQuery);
+    // const input = [userinfo.MSSV, subject_code, "231", "DELETE"];
+    const results = await new Promise((resolve, reject) => {
+      connection.query(sqlQuery, [mssv], function (err, result, fields) {
+        if (err) {
+          // Reject the promise with other database errors
+          if (err.code === "ER_SIGNAL_EXCEPTION") {
+            // Resolve the promise with the trigger error message
+            console.error(err.message);
+            resolve({ errCode: 1, errMessage: err.message });
+          } else {
+            // Reject the promise with other database errors
+            console.error(err);
+            connection.release();
+            reject(err);
+          }
+        } else {
+          // Resolve the promise with the successful result
+          resolve({
+            errCode: 0,
+            errMessage: "update student succeed",
+            result: result,
+          });
+        }
+      });
     });
     connection.release();
     return results;
@@ -402,4 +560,8 @@ module.exports = {
   createClass,
   getList,
   searchList,
+  createStudent,
+  CreateLecturer,
+  upDateData,
+  deleteData,
 };

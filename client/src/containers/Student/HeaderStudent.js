@@ -59,7 +59,7 @@ class HeaderStudent extends Component {
               <i className="fa fa-user"></i>
               <Link to="/homepage-student" class="Nav-user-content">
                 <span>{user && user.name}</span>
-                <span> ({user && user.MSSV})</span>
+                <span> ({user && user.MS})</span>
               </Link>
             </div>
             <div className="Nav-tutorial">

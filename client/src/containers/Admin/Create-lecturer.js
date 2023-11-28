@@ -4,7 +4,11 @@ import { connect } from "react-redux";
 import NavAdmin from "./navAdmin";
 import "react-image-lightbox/style.css";
 import { toast } from "react-toastify";
-import { createLecturerService } from "../../services/userService";
+import {
+  createLecturerService,
+  getListFaculty,
+} from "../../services/userService";
+import Select from "react-select";
 class CreateLecturer extends Component {
   constructor(props) {
     super(props);
@@ -18,11 +22,38 @@ class CreateLecturer extends Component {
       sex: "1",
       position: "",
       level: "",
+      faculty: {},
+      listFaculty: [],
+      supervisor_id: null,
     };
   }
 
-  async componentDidMount() {}
-
+  async componentDidMount() {
+    let res = await getListFaculty();
+    if (res && res.errCode === 0) {
+      let selectFaculty = this.buildDataInputSelect(res.data);
+      this.setState({
+        listFaculty: selectFaculty,
+      });
+    }
+  }
+  buildDataInputSelect = (inputData) => {
+    let results = [];
+    if (inputData && inputData.length > 0) {
+      inputData.map((faculty, index) => {
+        let obj = {};
+        obj.label = faculty.f_name;
+        obj.value = faculty.faculty_id;
+        results.push(obj);
+      });
+    }
+    return results;
+  };
+  handleChangeSelect = (faculty) => {
+    this.setState({
+      faculty,
+    });
+  };
   checkValidInput = () => {
     let isValid = true;
     let arrInput = [
@@ -35,6 +66,7 @@ class CreateLecturer extends Component {
       "sex",
       "position",
       "level",
+      "faculty",
     ];
     for (let i = 0; i < arrInput.length; i++) {
       if (!this.state[arrInput[i]]) {
@@ -49,15 +81,17 @@ class CreateLecturer extends Component {
     let isValid = this.checkValidInput();
     if (isValid) {
       let res = await createLecturerService({
+        mssv: this.state.mssv,
+        name: this.state.name,
         email: this.state.email,
         password: this.state.password,
-        name: this.state.name,
-        mssv: this.state.mssv,
-        address: this.state.address,
         birthday: this.state.birthday,
+        address: this.state.address,
         sex: this.state.sex,
-        position: this.state.position,
+        faculty: this.state.faculty.value,
         level: this.state.level,
+        position: this.state.position,
+        supervisor_id: this.state.supervisor_id,
       });
       if (res && res.errCode === 0) {
         toast.success("Tạo lecturer thành công", {
@@ -98,7 +132,7 @@ class CreateLecturer extends Component {
         {" "}
         <NavAdmin />
         <div className="user-redux-container">
-          <div className="title text-center">Tạo sinh viên</div>;
+          <div className="title text-center">Tạo giảng viên</div>;
           <div className="user-redux-body">
             <div className="container">
               <div className="row">
@@ -212,13 +246,32 @@ class CreateLecturer extends Component {
                     }
                   />
                 </div>
+                <div className="col-6">
+                  <label className="title">Supervisor</label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    value={this.state.supervisor_id}
+                    onChange={(event) =>
+                      this.handleOnChangeInput(event, "supervisor_id")
+                    }
+                  />
+                </div>
+                <div className="col-6 mt-5">
+                  <Select
+                    value={this.state.faculty}
+                    onChange={this.handleChangeSelect}
+                    options={this.state.listFaculty}
+                    placeholder="Chọn Khoa"
+                  />
+                </div>
                 <div className="col-2 mt-5">
                   <button
                     className="btn btn-primary px-3"
                     onClick={() => this.handleCreateLecturer()}
                   >
                     <i className="fas fa-plus"></i>
-                    Add new users
+                    Add new lecturer
                   </button>
                 </div>
               </div>

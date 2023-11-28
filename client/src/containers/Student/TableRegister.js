@@ -41,6 +41,7 @@ class TableRegister extends Component {
   };
   render() {
     const { listregister } = this.state;
+    console.log("list", listregister);
     return (
       <React.Fragment>
         <div className="selec-response">

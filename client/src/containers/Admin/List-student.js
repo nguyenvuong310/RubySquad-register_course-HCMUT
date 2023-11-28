@@ -2,13 +2,17 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import "./admin.scss";
 import NavAdmin from "./navAdmin";
-import { getList, searchList } from "../../services/userService";
+import { getList, searchList, delDataByMS } from "../../services/userService";
+import { toast } from "react-toastify";
+import ModalEditStudent from "./modalEditStudent";
 class ListStudent extends Component {
   constructor(props) {
     super(props);
     this.state = {
       arrUser: [],
       isDesc: false,
+      isOpenModalEdit: false,
+      currentUser: {},
     };
   }
   async componentDidMount() {
@@ -25,6 +29,11 @@ class ListStudent extends Component {
       ...copyState,
     });
   };
+  toggleEditModal = () => {
+    this.setState({
+      isOpenModalEdit: !this.state.isOpenModalEdit,
+    });
+  };
   getListStudent = async () => {
     let res = await getList("students", "email", "ASC");
     if (res && res.errCode === 0) {
@@ -32,6 +41,39 @@ class ListStudent extends Component {
         arrUser: res.data,
       });
     }
+  };
+  handleEditUser = (user) => {
+    this.setState({
+      currentUser: user,
+      isOpenModalEdit: true,
+    });
+  };
+  handleDelUser = async (user) => {
+    let res = await delDataByMS(user.MS, "students");
+    if (res && res.errCode === 0) {
+      toast.info("Xóa student thành công", {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } else {
+      toast.error(res.errMessage, {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+    await this.getListStudent();
   };
   handleGetList = async () => {
     let res = "";
@@ -110,6 +152,17 @@ class ListStudent extends Component {
             <tbody>
               <tr>
                 <th className="title-table">
+                  <span>MS</span>
+                  <i
+                    className={
+                      isDesc
+                        ? "fas fa-sort-amount-up ml-3 hover"
+                        : "fas fa-sort-amount-down ml-3 hover"
+                    }
+                    onClick={() => this.handleFillter("MSSV")}
+                  ></i>
+                </th>
+                <th className="title-table">
                   <span>Email</span>{" "}
                   <i
                     className={
@@ -121,7 +174,7 @@ class ListStudent extends Component {
                   ></i>
                 </th>
                 <th className="title-table">
-                  <span>Name</span>{" "}
+                  <span>Tên</span>{" "}
                   <i
                     className={
                       isDesc
@@ -132,17 +185,18 @@ class ListStudent extends Component {
                   ></i>
                 </th>
                 <th className="title-table">
-                  <span>MS</span>
+                  {" "}
+                  <span>Khoa</span>{" "}
                   <i
                     className={
                       isDesc
                         ? "fas fa-sort-amount-up ml-3 hover"
                         : "fas fa-sort-amount-down ml-3 hover"
                     }
-                    onClick={() => this.handleFillter("MSSV")}
+                    onClick={() => this.handleFillter("f_name")}
                   ></i>
                 </th>
-                <th>yearStartLearn</th>
+                <th>Thời gian nhập học</th>
                 <th>Action</th>
               </tr>
 
@@ -151,21 +205,22 @@ class ListStudent extends Component {
                 arrUser.map((item, index) => {
                   return (
                     <tr key={index}>
+                      <td>{item.MS}</td>
                       <td>{item.email}</td>
                       <td>{item.name}</td>
-                      <td>{item.MSSV}</td>
+                      <td>{item.f_name}</td>
                       <td>{item.yearStartLearn}</td>
 
                       <td>
                         <button
                           className="btn-edit"
-                          //   onClick={() => this.handleEditUser(item)}
+                          onClick={() => this.handleEditUser(item)}
                         >
                           <i className="fas fa-edit"></i>
                         </button>
                         <button
                           className="btn-del"
-                          //   onClick={() => this.handleDelUser(item)}
+                          onClick={() => this.handleDelUser(item)}
                         >
                           <i className="fas fa-trash-alt"></i>
                         </button>
@@ -176,6 +231,12 @@ class ListStudent extends Component {
             </tbody>
           </table>
         </div>
+        <ModalEditStudent
+          isOpen={this.state.isOpenModalEdit}
+          toggle={this.toggleEditModal}
+          currentUser={this.state.currentUser}
+          editUser={this.doEdit}
+        />
       </React.Fragment>
     );
   }

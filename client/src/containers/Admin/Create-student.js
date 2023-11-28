@@ -4,7 +4,11 @@ import { connect } from "react-redux";
 import NavAdmin from "./navAdmin";
 import "react-image-lightbox/style.css";
 import { toast } from "react-toastify";
-import { createStudentService } from "../../services/userService";
+import {
+  createStudentService,
+  getListFaculty,
+} from "../../services/userService";
+import Select from "react-select";
 class CreateStudent extends Component {
   constructor(props) {
     super(props);
@@ -17,11 +21,32 @@ class CreateStudent extends Component {
       birthday: "",
       sex: "1",
       yearStartLearn: "",
+      faculty: "",
+      listFaculty: [],
     };
   }
 
-  async componentDidMount() {}
-
+  async componentDidMount() {
+    let res = await getListFaculty();
+    if (res && res.errCode === 0) {
+      let selectFaculty = this.buildDataInputSelect(res.data);
+      this.setState({
+        listFaculty: selectFaculty,
+      });
+    }
+  }
+  buildDataInputSelect = (inputData) => {
+    let results = [];
+    if (inputData && inputData.length > 0) {
+      inputData.map((faculty, index) => {
+        let obj = {};
+        obj.label = faculty.f_name;
+        obj.value = faculty.faculty_id;
+        results.push(obj);
+      });
+    }
+    return results;
+  };
   checkValidInput = () => {
     let isValid = true;
     let arrInput = [
@@ -33,6 +58,7 @@ class CreateStudent extends Component {
       "birthday",
       "sex",
       "yearStartLearn",
+      "faculty",
     ];
     for (let i = 0; i < arrInput.length; i++) {
       if (!this.state[arrInput[i]]) {
@@ -47,13 +73,14 @@ class CreateStudent extends Component {
     let isValid = this.checkValidInput();
     if (isValid) {
       let res = await createStudentService({
+        mssv: this.state.mssv,
+        name: this.state.name,
         email: this.state.email,
         password: this.state.password,
-        name: this.state.name,
-        mssv: this.state.mssv,
-        address: this.state.address,
         birthday: this.state.birthday,
+        address: this.state.address,
         sex: this.state.sex,
+        faculty: this.state.faculty,
         yearStartLearn: this.state.yearStartLearn,
       });
       if (res && res.errCode === 0) {
@@ -88,7 +115,11 @@ class CreateStudent extends Component {
       ...copyState,
     });
   };
-
+  handleChangeSelect = (faculty) => {
+    this.setState({
+      faculty: faculty.value,
+    });
+  };
   render() {
     return (
       <>
@@ -176,7 +207,7 @@ class CreateStudent extends Component {
                     <option value="0">Female</option>
                   </select>
                 </div>
-                <div className="col-6">
+                <div className="col-3">
                   <label className="title">yearStartLearn</label>
                   <input
                     className="form-control"
@@ -187,13 +218,21 @@ class CreateStudent extends Component {
                     }
                   />
                 </div>
+                <div className="col-3 mt-5">
+                  <Select
+                    value={this.state.faculty}
+                    onChange={this.handleChangeSelect}
+                    options={this.state.listFaculty}
+                    placeholder="Chọn Khoa"
+                  />
+                </div>
                 <div className="col-2 mt-5">
                   <button
                     className="btn btn-primary px-3"
                     onClick={() => this.handleCreateStudent()}
                   >
                     <i className="fas fa-plus"></i>
-                    Add new users
+                    Add new student
                   </button>
                 </div>
               </div>

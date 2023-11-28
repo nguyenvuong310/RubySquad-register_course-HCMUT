@@ -1,6 +1,5 @@
 import userService from "../services/useService";
 import CRUD from "../Database/function/CRUD";
-import { use } from "passport";
 let getHomePage = async (req, res) => {
   try {
     return res.render("homePage.ejs");
@@ -16,43 +15,16 @@ let getLecturer = (req, res) => {
 };
 let postStudent = async (req, res) => {
   // let yearStartLearn = req.body.yearStartLearn;
+  // console.log(req.body.data);
   let data = req.body.data;
-  let response1 = await userService.createNewUser("users", data);
-  if (response1.errCode === 0) {
-    let dataInsertToTableStudent = {
-      id: data.mssv,
-      yearStartLearn: data.yearStartLearn,
-    };
-    let response2 = await CRUD.insertData("students", dataInsertToTableStudent);
-    return res.status(200).json(response2);
-  } else {
-    return res.status(200).json(response1);
-  }
+  let response = await CRUD.createStudent(data);
+  res.status(200).json(response);
 };
 let postLecturer = async (req, res) => {
   // let yearStartLearn = req.body.yearStartLearn;
   let data = req.body.data;
-  let response1 = await userService.createNewUser("users", data);
-  let dataInsertToTableLecturer = {
-    id: data.mssv,
-    level: data.level,
-    position: data.position,
-  };
-  if (response1.errCode === 0) {
-    let response2 = await CRUD.insertData(
-      "lecturers",
-      dataInsertToTableLecturer
-    );
-    return res.status(200).json(response2);
-  } else {
-    return res.status(200).json(response1);
-  }
-};
-let readCRUD = async (req, res) => {
-  let data = await userService.getAllUser();
-  return res.render("displayCRUD.ejs", {
-    dataTable: data,
-  });
+  let response = await CRUD.CreateLecturer(data);
+  res.status(200).json(response);
 };
 
 let delCRUD = async (req, res) => {
@@ -194,11 +166,30 @@ let handleSearchList = async (req, res) => {
     return res.status(200).json({ errCode: 0, errMessage: "get list failed" });
   }
 };
+let handleGetAllFaculty = async (req, res) => {
+  let response = await userService.getAllFaculty();
+  return res.status(200).json({
+    errCode: 0,
+    errMessage: "get list faculty succeed",
+    data: response,
+  });
+};
+let handleUpdateData = async (req, res) => {
+  const data = req.body.data;
+  const tableName = req.body.tableName;
+  let response = await CRUD.upDateData(data, tableName);
+  return res.status(200).json(response);
+};
+let handleDeleteData = async (req, res) => {
+  const data = req.body.MS;
+  const tableName = req.body.tableName;
+  let response = await CRUD.deleteData(data, tableName);
+  return res.status(200).json(response);
+};
 module.exports = {
   postStudent,
   getStudent,
   getHomePage,
-  readCRUD,
   delCRUD,
   handleLogin,
   getLecturer,
@@ -210,4 +201,7 @@ module.exports = {
   handleCreateClassRegisterPhase1,
   handleGetList,
   handleSearchList,
+  handleGetAllFaculty,
+  handleUpdateData,
+  handleDeleteData,
 };

@@ -110,6 +110,17 @@ class ListLecturer extends Component {
             <tbody>
               <tr>
                 <th className="title-table">
+                  <span>MS</span>
+                  <i
+                    className={
+                      isDesc
+                        ? "fas fa-sort-amount-up ml-3 hover"
+                        : "fas fa-sort-amount-down ml-3 hover"
+                    }
+                    onClick={() => this.handleFillter("MSSV")}
+                  ></i>
+                </th>
+                <th className="title-table">
                   <span>Email</span>{" "}
                   <i
                     className={
@@ -131,17 +142,8 @@ class ListLecturer extends Component {
                     onClick={() => this.handleFillter("name")}
                   ></i>
                 </th>
-                <th className="title-table">
-                  <span>MS</span>
-                  <i
-                    className={
-                      isDesc
-                        ? "fas fa-sort-amount-up ml-3 hover"
-                        : "fas fa-sort-amount-down ml-3 hover"
-                    }
-                    onClick={() => this.handleFillter("MSSV")}
-                  ></i>
-                </th>
+
+                <th>Khoa</th>
                 <th>Position</th>
                 <th>Level</th>
                 <th>Action</th>
@@ -152,9 +154,10 @@ class ListLecturer extends Component {
                 arrUser.map((item, index) => {
                   return (
                     <tr key={index}>
+                      <td>{item.MS}</td>
                       <td>{item.email}</td>
                       <td>{item.name}</td>
-                      <td>{item.MSSV}</td>
+                      <td>{item.f_name}</td>
                       <td>{item.position}</td>
                       <td>{item.level}</td>
 

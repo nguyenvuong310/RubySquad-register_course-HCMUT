@@ -67,6 +67,17 @@ const searchList = (role, input, orderByField, sortOrder) => {
     `/api/search-list-student?tableName=${role}&input=${input}&sortOrder=${sortOrder}&orderByField=${orderByField}`
   );
 };
+const getListFaculty = () => {
+  return axios.get(`/api/get-all-faculty`);
+};
+const delDataByMS = (MS, tableName) => {
+  return axios.delete("/api/delete-data-user", {
+    data: {
+      MS: MS,
+      tableName: tableName,
+    },
+  });
+};
 export {
   handleLoginApi,
   handleSearchCourseService,
@@ -77,4 +88,6 @@ export {
   getList,
   createLecturerService,
   searchList,
+  getListFaculty,
+  delDataByMS,
 };

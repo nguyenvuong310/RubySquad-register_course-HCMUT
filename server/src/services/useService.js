@@ -2,56 +2,6 @@ import bcrypt from "bcryptjs";
 import CRUD from "../Database/function/CRUD";
 import checkInTable from "../Database/function/checkExist";
 const salt = bcrypt.genSaltSync(10);
-let createNewUser = (tableName, data) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      if (data) {
-        let dataToInsert = {
-          name: data.name,
-          email: data.email,
-          password: data.password,
-          birthday: data.birthday,
-          address: data.address,
-          sex: data.sex,
-          mssv: data.mssv,
-        };
-        let res = await CRUD.insertData(tableName, dataToInsert);
-        resolve(res);
-      } else {
-        reject("Data is undefined or null");
-      }
-    } catch (error) {
-      reject(error);
-    }
-  });
-
-  //   console.log("data from service");
-  //   console.log(data);
-  //   console.log(hashPasswordFromBrcypt);
-};
-let createNewStudent = (tableName, data) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      if (data) {
-        let dataToInsert = {
-          student_id: data.id,
-          yearStartLearn: data.yearStartLearn,
-        };
-        //console.log("data", dataToInsert);
-        let res = await CRUD.insertData(tableName, dataToInsert);
-        resolve(res);
-      } else {
-        reject("Data is undefined or null");
-      }
-    } catch (error) {
-      reject(error);
-    }
-  });
-
-  //   console.log("data from service");
-  //   console.log(data);
-  //   console.log(hashPasswordFromBrcypt);
-};
 
 let getAllUser = () => {
   return new Promise(async (resolve, reject) => {
@@ -102,8 +52,9 @@ let handleUserLogin = (email, password) => {
             userData.errCode = 0;
             userData.errMessage = "ok";
             userData.user = user;
-            let inStudent = await checkInTable("students", user.id);
+            let inStudent = await checkInTable("students", user.MS);
             // let inLecturer = await checkInTable("lecturers", user.id);
+            console.log(inStudent);
             if (inStudent) {
               userData.role = "student";
             } else {
@@ -185,7 +136,6 @@ let handleGetListRegisterService = (userid) => {
   });
 };
 module.exports = {
-  createNewUser,
   getAllUser: getAllUser,
   getAllFaculty,
   deleteUserById: deleteUserById,
