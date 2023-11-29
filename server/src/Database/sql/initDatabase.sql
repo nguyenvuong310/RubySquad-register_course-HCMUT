@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS Attends (
   id int not null AUTO_INCREMENT,
   student_id INTEGER NOT NULL,
   class_id INTEGER NOT NULL,
-  score INTEGER,
+  score DOUBLE,
   action VARCHAR(255),
   PRIMARY KEY (id),
   FOREIGN KEY (class_id) REFERENCES Classes(class_id),
@@ -280,10 +280,10 @@ BEGIN
     DECLARE i INT;
     -- Calculate Whole_num for the specified subject_code
     SELECT
-        COALESCE(COUNT(DISTINCT rp.subject_code), 0)
+        COUNT(DISTINCT rp.subject_code)
     INTO whole_num
     FROM
-        registerpharse1 rp
+        registerphase1 rp
     WHERE
         rp.semester_id = p_semester_id
         AND rp.subject_code = p_subject_code
@@ -292,6 +292,7 @@ BEGIN
     HAVING
         SUM(CASE WHEN rp.action = 'INSERT' THEN 1 ELSE 0 END) > SUM(CASE WHEN rp.action = 'DELETE' THEN 1 ELSE 0 END);
     -- Print Whole_num
+    SET whole_num = COALESCE(whole_num, 0);
     -- SELECT whole_num AS Whole_num;
     -- Calculate the number of classes to insert
     SET num_classes = whole_num / 40 + 1;
@@ -923,6 +924,35 @@ CALL InsertStudentData(
     '2022-01-01'
 );
 
+-- Example 1
+INSERT INTO `attends` (`id`, `student_id`, `class_id`, `score`, `action`, `createdAt`, `updatedAt`) VALUES (NULL, '2115339', '1', 9, 'STUDY', current_timestamp(), current_timestamp());
+
+-- Example 2
+INSERT INTO `attends` (`id`, `student_id`, `class_id`, `score`, `action`, `createdAt`, `updatedAt`) VALUES (NULL, '2115342', '3', 8, 'STUDY', current_timestamp(), current_timestamp());
+
+-- Example 3
+INSERT INTO `attends` (`id`, `student_id`, `class_id`, `score`, `action`, `createdAt`, `updatedAt`) VALUES (NULL, '2115343', '4', 7, 'STUDY', current_timestamp(), current_timestamp());
+
+-- Example 4
+INSERT INTO `attends` (`id`, `student_id`, `class_id`, `score`, `action`, `createdAt`, `updatedAt`) VALUES (NULL, '2115344', '5', 6, 'STUDY', current_timestamp(), current_timestamp());
+
+-- Example 5
+INSERT INTO `attends` (`id`, `student_id`, `class_id`, `score`, `action`, `createdAt`, `updatedAt`) VALUES (NULL, '2115345', '6', 5, 'STUDY', current_timestamp(), current_timestamp());
+
+-- Example 6
+INSERT INTO `attends` (`id`, `student_id`, `class_id`, `score`, `action`, `createdAt`, `updatedAt`) VALUES (NULL, '2115346', '7', 4, 'STUDY', current_timestamp(), current_timestamp());
+
+-- Example 7
+INSERT INTO `attends` (`id`, `student_id`, `class_id`, `score`, `action`, `createdAt`, `updatedAt`) VALUES (NULL, '2115347', '8', 3, 'STUDY', current_timestamp(), current_timestamp());
+
+-- Example 8
+INSERT INTO `attends` (`id`, `student_id`, `class_id`, `score`, `action`, `createdAt`, `updatedAt`) VALUES (NULL, '2115338', '9', 2, 'STUDY', current_timestamp(), current_timestamp());
+
+-- Example 9
+INSERT INTO `attends` (`id`, `student_id`, `class_id`, `score`, `action`, `createdAt`, `updatedAt`) VALUES (NULL, '2115342', '10', 1, 'STUDY', current_timestamp(), current_timestamp());
+
+-- Example 10
+INSERT INTO `attends` (`id`, `student_id`, `class_id`, `score`, `action`, `createdAt`, `updatedAt`) VALUES (NULL, '2115339', '11', 10, 'STUDY', current_timestamp(), current_timestamp());
 
 
 

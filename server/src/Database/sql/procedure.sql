@@ -14,7 +14,7 @@ BEGIN
         COALESCE(COUNT(DISTINCT rp.subject_code), 0)
     INTO whole_num
     FROM
-        registerpharse1 rp
+        registerphase1 rp
     WHERE
         rp.semester_id = p_semester_id
         AND rp.subject_code = p_subject_code
@@ -23,7 +23,7 @@ BEGIN
     HAVING
         SUM(CASE WHEN rp.action = 'INSERT' THEN 1 ELSE 0 END) > SUM(CASE WHEN rp.action = 'DELETE' THEN 1 ELSE 0 END);
     -- Print Whole_num
-    -- SELECT whole_num AS Whole_num;
+    SELECT whole_num AS Whole_num;
     -- Calculate the number of classes to insert
     SET num_classes = whole_num / 40 + 1;
     -- Loop to insert records into Classes table

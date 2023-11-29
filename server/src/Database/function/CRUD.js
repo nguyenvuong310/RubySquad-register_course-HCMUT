@@ -231,7 +231,7 @@ let chooseCourse = async (course, userinfo) => {
   }
 };
 let getListRegiter = async (userid) => {
-  console.log(userid);
+  // console.log(userid);
   try {
     const semester_id = "231";
     const connection = await getConnection();
@@ -249,7 +249,7 @@ let getListRegiter = async (userid) => {
               reject(err);
             }
             resolve(result[0]);
-            console.log(result);
+            // console.log(result);
           }
         );
       } catch (e) {
