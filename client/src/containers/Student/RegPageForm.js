@@ -58,7 +58,11 @@ class RegPageForm extends Component {
                 </div>
                 <div className="regpage-form-button">
                   <button className="regpage-home-button">TRANG CHÍNH</button>
-                  <Link className="regpage-reg-button" to="/regpage-select">
+                  <Link
+                    className="regpage-reg-button"
+                    to="/regpage-select"
+                    typr="button"
+                  >
                     ĐĂNG KÝ/ HIỆU CHỈNH
                   </Link>
                 </div>

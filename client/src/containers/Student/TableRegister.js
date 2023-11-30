@@ -12,7 +12,7 @@ class TableRegister extends Component {
     super(props);
     this.state = {
       listregister: [],
-      totalCredit: "",
+      totalCredit: 0,
     };
   }
   async componentDidMount() {
@@ -29,11 +29,12 @@ class TableRegister extends Component {
       });
     }
   };
-  componentDidUpdate(preProps) {
+  async componentDidUpdate(preProps) {
     if (this.props.listregister !== preProps.listregister) {
       this.setState({
         listregister: this.props.listregister,
       });
+      await this.handleGetTotalCredit();
     }
   }
   handleDelete = async (subject) => {

@@ -84,6 +84,11 @@ const getTotalCreditsPhase1 = (mssv, semester_id) => {
     semester_id: semester_id,
   });
 };
+const editUserService = (inputData, tableName) => {
+  return axios.put("/api/update-data-user", {
+    data: inputData,
+  });
+};
 export {
   handleLoginApi,
   handleSearchCourseService,
@@ -97,4 +102,5 @@ export {
   getListFaculty,
   delDataByMS,
   getTotalCreditsPhase1,
+  editUserService,
 };

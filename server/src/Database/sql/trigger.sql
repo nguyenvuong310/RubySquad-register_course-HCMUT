@@ -213,3 +213,75 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER check_insert_registerphase1
+BEFORE INSERT ON registerphase1
+FOR EACH ROW
+BEGIN
+  DECLARE register_count INT;
+  DECLARE delete_count INT;
+  DECLARE semester_exist INT;
+  DECLARE new_credit INT;
+  DECLARE total_credits INT;
+
+  -- Check if semester_id exists
+  SELECT COUNT(*)
+  INTO semester_exist
+  FROM semester
+  WHERE semester_id = NEW.semester_id;
+
+  -- Check if it's a valid semester_id
+  IF semester_exist = 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Invalid semester_id. Semester does not exist.';
+  ELSE
+    -- Count "REGISTER" actions
+    SELECT COUNT(*)
+    INTO register_count
+    FROM registerphase1
+    WHERE subject_code = NEW.subject_code
+      AND semester_id = NEW.semester_id
+      AND action = 'REGISTER'
+      AND student_id = NEW.student_id;
+
+    -- Count "DELETE" actions
+    SELECT COUNT(*)
+    INTO delete_count
+    FROM registerphase1
+    WHERE subject_code = NEW.subject_code
+      AND semester_id = NEW.semester_id
+      AND action = 'DELETE'
+      AND student_id = NEW.student_id;
+
+    -- Check if it's a valid operation
+    IF NEW.action = 'DELETE' AND register_count - delete_count = 0 THEN
+      SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Cannot delete. The subject has not been deleted.';
+    ELSEIF NEW.action = 'REGISTER' AND register_count - delete_count = 1 THEN
+      SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Cannot insert. The subject has already been registered.';
+    ELSE
+      -- Calculate total credits for the semester using the function
+
+      SET total_credits = CalcTotalCreditSemester(NEW.student_id, NEW.semester_id);
+
+      -- Get the new credit for the subject
+      SELECT s.credits INTO new_credit
+      FROM registerphase1 rp
+      JOIN subjects s ON s.subject_code = rp.subject_code
+      WHERE rp.subject_code = NEW.subject_code
+      LIMIT 1;
+
+      -- Check if the total credits exceed 25
+      IF total_credits + new_credit > 25  AND NEW.action = "REGISTER" THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot insert. Total credits exceed 25 for the semester.';
+      END IF;
+    END IF;
+  END IF;
+END;
+
+//
+DELIMITER ;

@@ -176,8 +176,7 @@ let handleGetAllFaculty = async (req, res) => {
 };
 let handleUpdateData = async (req, res) => {
   const data = req.body.data;
-  const tableName = req.body.tableName;
-  let response = await CRUD.upDateData(data, tableName);
+  let response = await CRUD.upDateData(data);
   return res.status(200).json(response);
 };
 let handleDeleteData = async (req, res) => {

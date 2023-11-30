@@ -57,7 +57,7 @@ class ModalEditStudent extends Component {
   };
   checkValidInput = () => {
     let isValid = true;
-    let arrInput = ["email", "name", "yearStartLearn"];
+    let arrInput = ["name", "address"];
     for (let i = 0; i < arrInput.length; i++) {
       if (!this.state[arrInput[i]]) {
         isValid = false;
@@ -94,6 +94,7 @@ class ModalEditStudent extends Component {
                 className="content1"
                 onChange={(event) => this.handleOnChangeInput(event, "email")}
                 value={this.state.email}
+                disabled
               ></input>
             </div>
             <div className="editmodal">

@@ -462,18 +462,13 @@ let CreateLecturer = async (data) => {
     console.log("Error during search:", error);
   }
 };
-let upDateData = async (data, tableName) => {
+let upDateData = async (data) => {
   try {
     // console.log(tableName);
 
     const connection = await getConnection();
-    const sqlQuery = "";
-    if (tableName === "students") {
-      sqlQuery = `CALL UpdateStudentData(?)`;
-    }
-    if (tableName === "lecturers") {
-      sqlQuery = `CALL UpdateLecturerData(?)`;
-    }
+    const sqlQuery = `CALL UpdateData(?)`;
+
     const columns = Object.keys(data);
     const values = columns.map((col) => data[col]);
     // const input = [userinfo.MSSV, subject_code, "231", "DELETE"];

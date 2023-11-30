@@ -2,7 +2,12 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import "./admin.scss";
 import NavAdmin from "./navAdmin";
-import { getList, searchList, delDataByMS } from "../../services/userService";
+import {
+  getList,
+  searchList,
+  delDataByMS,
+  editUserService,
+} from "../../services/userService";
 import { toast } from "react-toastify";
 import ModalEditStudent from "./modalEditStudent";
 class ListStudent extends Component {
@@ -123,6 +128,28 @@ class ListStudent extends Component {
       this.handleGetList();
     }
   };
+  doEdit = async (data) => {
+    console.log(data);
+    let req = {
+      MS: data.MS,
+      address: data.address,
+      name: data.name,
+    };
+    let response = await editUserService(req);
+    if (response && response.errCode === 0) {
+      this.toggleEditModal();
+      toast.success("Update thành công", {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
   render() {
     const { arrUser, isDesc } = this.state;
     return (
@@ -208,6 +235,7 @@ class ListStudent extends Component {
                     onClick={() => this.handleFillter("f_name")}
                   ></i>
                 </th>
+                <th>Địa chỉ</th>
                 <th>Thời gian nhập học</th>
                 <th>Action</th>
               </tr>
@@ -221,6 +249,7 @@ class ListStudent extends Component {
                       <td>{item.email}</td>
                       <td>{item.name}</td>
                       <td>{item.f_name}</td>
+                      <td>{item.address}</td>
                       <td>{item.yearStartLearn}</td>
 
                       <td>

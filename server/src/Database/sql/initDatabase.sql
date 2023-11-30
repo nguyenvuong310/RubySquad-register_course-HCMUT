@@ -549,56 +549,31 @@ DELIMITER ;
 
 DELIMITER //
 
-CREATE PROCEDURE IF NOT EXISTS UpdateStudentData(
+CREATE PROCEDURE IF NOT EXISTS UpdateData(
     IN p_MS INT,
-    IN p_new_yearStartLearn DATE,
-    IN p_new_name VARCHAR(255),
-    IN p_new_email VARCHAR(255)
+    IN p_address VARCHAR(255),
+    IN p_new_name VARCHAR(255)
 )
 BEGIN
-    DECLARE user_count INT;
-
-    -- Check if the new MS or email already exists
-    SELECT COUNT(*) INTO user_count FROM Users WHERE (email = p_new_email) ;
-
-    IF user_count > 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'email already exists.';
-    ELSE
-        -- Update data in Users table
-        UPDATE Users
-        SET
-            name = p_new_name,
-            email = p_new_email
-        WHERE MS = p_MS;
-
-        -- Update data in Students table
-        UPDATE Students
-        SET yearStartLearn = p_new_yearStartLearn
-        WHERE MS = p_MS;
-    END IF;
+    -- Update data in Users table
+    UPDATE Users
+    SET
+        name = p_new_name,
+        address = p_address
+    WHERE MS = p_MS;
 END //
 
 DELIMITER ;
+
 DELIMITER //
 
 CREATE PROCEDURE IF NOT EXISTS UpdateLecturerData(
     IN p_MS INT,
     IN p_new_level VARCHAR(255),
     IN p_new_name VARCHAR(255),
-    IN p_new_email VARCHAR(255),
     IN p_position VARCHAR(255)
 )
 BEGIN
-    DECLARE user_count INT;
-
-    -- Check if the new MS or email already exists
-    SELECT COUNT(*) INTO user_count FROM Users WHERE (email = p_new_email) ;
-
-    IF user_count > 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'email already exists.';
-    ELSE
         -- Update data in Users table
         UPDATE Users
         SET
@@ -612,7 +587,7 @@ BEGIN
         	level = p_new_level,
         	position = p_position
         WHERE MS = p_MS;
-    END IF;
+
 END //
 
 DELIMITER ;
@@ -780,7 +755,40 @@ BEGIN
 END //
 
 DELIMITER ;
+DELIMITER //
 
+CREATE FUNCTION CalcTotalCreditSemesterRP1(p_student_id INT, p_semester_id INT) RETURNS DOUBLE
+BEGIN
+    DECLARE totalCredits INT;
+
+    -- Check if the student exists
+    IF NOT EXISTS (SELECT 1 FROM Students WHERE MS = p_student_id) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Student does not exist';
+    END IF;
+
+    -- Check if the semester exists
+    IF NOT EXISTS (SELECT 1 FROM Semester WHERE semester_id = p_semester_id) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Semester does not exist';
+    END IF;
+
+    -- Calculate total credits for the specified semester
+    SELECT SUM(s.credits)
+    INTO totalCredits
+    FROM (
+        SELECT rp.student_id, rp.subject_code
+        FROM registerphase1 rp
+        WHERE rp.student_id = p_student_id AND rp.semester_id = p_semester_id
+        GROUP BY rp.student_id, rp.subject_code
+        HAVING SUM(CASE WHEN rp.action = 'REGISTER' THEN 1 ELSE 0 END) > SUM(CASE WHEN rp.action = 'DELETE' THEN 1 ELSE 0 END)
+    ) AS credits
+    JOIN Subjects s ON credits.subject_code = s.subject_code;
+
+    RETURN totalCredits;
+END //
+
+DELIMITER ;
 
 CALL InsertStudentData(
     2115339,
