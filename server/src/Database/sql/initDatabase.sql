@@ -5,6 +5,16 @@ CREATE TABLE IF NOT EXISTS Semester (
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 );
+CREATE TABLE IF NOT EXISTS register_course (
+  id int not null AUTO_INCREMENT PRIMARY KEY,
+  register_title VARCHAR(255),
+  semester_id INTEGER,
+  FOREIGN KEY (semester_id) REFERENCES Semester(semester_id),
+  timestart DATE,
+  timeend DATE,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+);  
 CREATE TABLE IF NOT EXISTS Facultys (
   faculty_id VARCHAR(255) ,
   f_name VARCHAR(255),
@@ -268,9 +278,35 @@ VALUES
 ('SP1037', 'Tư tưởng Hồ Chí Minh', 2, 2),
 ('SP1039', 'Lịch sử Đảng Cộng sản Việt Nam', 2, 2);
 
+INSERT IGNORE INTO register_course (register_title, semester_id, timestart, timeend)
+VALUES
+    ('Đăng ký các học phần có nhu cầu học HK2/2023-2024 tất cả các diện sinh viên đợt 1', 232, '2024-01-01', '2024-02-01'),
+    ('Đăng ký các học phần có nhu cầu học HK1/2023-2024 tất cả các diện sinh viên đợt 1', 231, '2023-07-15', '2023-07-30'),
+    ('Đăng ký các học phần có nhu cầu học HK2/2022-2023 tất cả các diện sinh viên đợt 1', 222, '2023-04-01', '2023-05-01'),
+    ('Đăng ký các học phần có nhu cầu học HK1/2022-2023 tất cả các diện sinh viên đợt 1', 221, '2023-06-01', '2023-07-01'),
+    ('Đăng ký các học phần có nhu cầu học HK2/2022-2023 tất cả các diện sinh viên đợt 2', 221, '2023-08-01', '2023-09-01'),
+    ('Đăng ký các học phần có nhu cầu học HK2/2021-2024 tất cả các diện sinh viên đợt 1', 212, '2023-10-01', '2023-11-01'),
+    ('Đăng ký các học phần có nhu cầu học HK2/2022-2023 tất cả các diện sinh viên đợt 3', 221, '2023-12-01', '2024-01-01'),
+    ('Đăng ký các học phần có nhu cầu học HK2/2023-2024 tất cả các diện sinh viên đợt 3', 232, '2024-02-01', '2024-03-01'),
+    ('Đăng ký các học phần có nhu cầu học HK1/2021-2022 tất cả các diện sinh viên đợt 2', 212, '2024-04-01', '2024-05-01'),
+    ('Đăng ký các học phần có nhu cầu học HK1/2021-2022 tất cả các diện sinh viên đợt 1', 211, '2021-06-01', '2021-07-01');
+
+INSERT IGNORE INTO `inchargeofs` (`id`, `class_id`, `lecturer_id`, `createdAt`, `updatedAt`) VALUES
+(1, 54, 3, '2023-11-30 12:43:18', '2023-11-30 12:43:18'),
+(2, 54, 19, '2023-11-30 12:43:32', '2023-11-30 12:43:32'),
+(3, 56, 15, '2023-11-30 12:43:42', '2023-11-30 12:43:42'),
+(4, 63, 18, '2023-11-30 12:43:50', '2023-11-30 12:43:50'),
+(5, 55, 1, '2023-11-30 12:43:57', '2023-11-30 12:43:57'),
+(6, 55, 9, '2023-11-30 12:44:03', '2023-11-30 12:44:03'),
+(7, 56, 8, '2023-11-30 12:44:10', '2023-11-30 12:44:10'),
+(8, 63, 24, '2023-11-30 12:44:17', '2023-11-30 12:44:17'),
+(9, 70, 4, '2023-11-30 12:44:25', '2023-11-30 12:44:25'),
+(10, 60, 18, '2023-11-30 12:44:49', '2023-11-30 12:44:49'),
+(11, 56, 22, '2023-11-30 12:44:57', '2023-11-30 12:44:57');
+
 DELIMITER //
 
-CREATE TRIGGER check_insert_registerphase1
+CREATE TRIGGER IF NOT EXISTS check_insert_registerphase1
 BEFORE INSERT ON registerphase1
 FOR EACH ROW
 BEGIN
@@ -345,7 +381,7 @@ DELIMITER ;
 
 DELIMITER //
 
-CREATE TRIGGER check_register_phase2_3
+CREATE TRIGGER IF NOT EXISTS check_register_phase2_3
 BEFORE INSERT ON Attends
 FOR EACH ROW
 BEGIN
@@ -366,7 +402,7 @@ END //
 
 DELIMITER ;
 DELIMITER //
-CREATE TRIGGER check_register_phase2_3_time
+CREATE TRIGGER IF NOT EXISTS check_register_phase2_3_time
 BEFORE INSERT ON Attends
 FOR EACH ROW
 BEGIN
@@ -455,7 +491,7 @@ END //
 DELIMITER ;
 DELIMITER //
 
-CREATE TRIGGER updateGPAandCredits
+CREATE TRIGGER IF NOT EXISTS updateGPAandCredits
 AFTER INSERT ON Attends
 FOR EACH ROW
 BEGIN
@@ -463,6 +499,38 @@ BEGIN
     DECLARE studentTotalCredits INT;
 
     -- Check if the action is 'STUDIED'
+    IF NEW.action = 'STUDIED' THEN
+        -- Calculate the new GPA and totalCredits for the student
+        SELECT SUM(max_score * s.credits), SUM(s.credits)
+        INTO studentGPA, studentTotalCredits
+        FROM (
+            SELECT a.student_id, c.subject_code as subject, MAX(a.score) as max_score
+            FROM Attends a
+            JOIN Classes c ON a.class_id = c.class_id
+            WHERE a.student_id = NEW.student_id AND a.action = 'STUDIED'
+            GROUP BY a.student_id, c.subject_code
+        ) AS max_scores
+        JOIN Subjects s ON max_scores.subject = s.subject_code;
+
+        -- Update GPA and totalCredits in the Students table
+        UPDATE Students
+        SET GPA = IF(studentTotalCredits > 0, studentGPA / studentTotalCredits, 0),
+            TotalCredits = studentTotalCredits
+        WHERE MS = NEW.student_id;
+    END IF;
+END //
+
+DELIMITER ;
+DELIMITER //
+
+CREATE TRIGGER  IF NOT EXISTS  updateGPAandCredits_afterUpdate
+AFTER UPDATE ON Attends
+FOR EACH ROW
+BEGIN
+    DECLARE studentGPA DOUBLE;
+    DECLARE studentTotalCredits INT;
+
+    -- Check if the action is 'STUDIED' in the updated record
     IF NEW.action = 'STUDIED' THEN
         -- Calculate the new GPA and totalCredits for the student
         SELECT SUM(max_score * s.credits), SUM(s.credits)

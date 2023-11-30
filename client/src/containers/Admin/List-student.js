@@ -148,6 +148,7 @@ class ListStudent extends Component {
         progress: undefined,
         theme: "light",
       });
+      await this.handleGetList();
     }
   };
   render() {
