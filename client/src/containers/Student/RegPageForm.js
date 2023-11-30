@@ -55,10 +55,6 @@ class RegPageForm extends Component {
                     </div>
                   </table>
                   <br></br>
-                  <div className="regpage-form-table-end-content">
-                    Tổng số tín chỉ đăng ký: 0<br></br>
-                    Tổng số môn đăng ký: 0
-                  </div>
                 </div>
                 <div className="regpage-form-button">
                   <button className="regpage-home-button">TRANG CHÍNH</button>

@@ -202,7 +202,7 @@ let chooseCourse = async (course, userinfo) => {
     const connection = await getConnection();
     let subject_code = course.subject_code;
     const sqlQuery = `INSERT INTO registerphase1 (student_id, subject_code, semester_id, action) VALUES (?)`;
-    const input = [userinfo.MS, subject_code, "231", "INSERT"];
+    const input = [userinfo.MS, subject_code, "231", "REGISTER"];
 
     const results = await new Promise((resolve, reject) => {
       connection.query(sqlQuery, [input], function (err, result, fields) {
@@ -334,6 +334,7 @@ let getList = async (tableName, orderByField, sortOrder) => {
     JOIN ${tableName} s ON u.MS = s.MS
     JOIN facultys f ON f.faculty_id = u.faculty_id
     ORDER BY ${orderByField} ${sortOrder};`;
+    // console.log(sqlQuery);
     // const input = [userinfo.MSSV, subject_code, "231", "DELETE"];
     const results = await new Promise((resolve, reject) => {
       connection.query(sqlQuery, function (err, result, fields) {
@@ -548,6 +549,47 @@ let deleteData = async (mssv, tableName) => {
     console.log("Error during search:", error);
   }
 };
+
+let getTotalCreditsRpPhase1 = async (mssv, semester_id) => {
+  try {
+    // console.log(tableName);
+
+    const connection = await getConnection();
+
+    const sqlQuery = `SELECT CalcTotalCreditSemester(?,?) AS totalCredits `;
+    // console.log(mssv);
+    // console.log(sqlQuery);
+    const input = [mssv, semester_id];
+    const results = await new Promise((resolve, reject) => {
+      connection.query(sqlQuery, input, function (err, result, fields) {
+        if (err) {
+          // Reject the promise with other database errors
+          if (err.code === "ER_SIGNAL_EXCEPTION") {
+            // Resolve the promise with the trigger error message
+            console.error(err.message);
+            resolve({ errCode: 1, errMessage: err.message });
+          } else {
+            // Reject the promise with other database errors
+            console.error(err);
+            connection.release();
+            reject(err);
+          }
+        } else {
+          // Resolve the promise with the successful result
+          resolve({
+            errCode: 0,
+            errMessage: "get total succeed",
+            result: result[0],
+          });
+        }
+      });
+    });
+    connection.release();
+    return results;
+  } catch (error) {
+    console.log("Error during search:", error);
+  }
+};
 module.exports = {
   insertData,
   getdata,
@@ -564,4 +606,5 @@ module.exports = {
   CreateLecturer,
   upDateData,
   deleteData,
+  getTotalCreditsRpPhase1,
 };

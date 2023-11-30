@@ -186,6 +186,12 @@ let handleDeleteData = async (req, res) => {
   let response = await CRUD.deleteData(data, tableName);
   return res.status(200).json(response);
 };
+let handleGetTotalCreditRP1 = async (req, res) => {
+  const mssv = req.body.MS;
+  const semester_id = req.body.semester_id;
+  let response = await CRUD.getTotalCreditsRpPhase1(mssv, semester_id);
+  return res.status(200).json(response);
+};
 module.exports = {
   postStudent,
   getStudent,
@@ -204,4 +210,5 @@ module.exports = {
   handleGetAllFaculty,
   handleUpdateData,
   handleDeleteData,
+  handleGetTotalCreditRP1,
 };

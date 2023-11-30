@@ -21,7 +21,7 @@ BEGIN
     GROUP BY
         rp.student_id
     HAVING
-        SUM(CASE WHEN rp.action = 'INSERT' THEN 1 ELSE 0 END) > SUM(CASE WHEN rp.action = 'DELETE' THEN 1 ELSE 0 END);
+        SUM(CASE WHEN rp.action = 'REGISTER' THEN 1 ELSE 0 END) > SUM(CASE WHEN rp.action = 'DELETE' THEN 1 ELSE 0 END);
     -- Print Whole_num
     SELECT whole_num AS Whole_num;
     -- Calculate the number of classes to insert
@@ -234,7 +234,8 @@ BEGIN
         rp.semester_id,
         rp.subject_code,
         s.subject_name,
-        s.credits
+        s.credits,
+        SUM (s.credits) AS totalCredits
     FROM
         registerphase1 rp
         JOIN subjects s ON rp.subject_code = s.subject_code

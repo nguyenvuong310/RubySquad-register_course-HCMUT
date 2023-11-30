@@ -25,6 +25,10 @@ let initWebRoutes = (app) => {
   router.get("/api/get-all-faculty", homeController.handleGetAllFaculty);
   router.put("/api/update-data-user", homeController.handleUpdateData);
   router.delete("/api/delete-data-user", homeController.handleDeleteData);
+  router.post(
+    "/api/get-total-credit-phase1",
+    homeController.handleGetTotalCreditRP1
+  );
   return app.use("/", router);
 };
 module.exports = initWebRoutes;

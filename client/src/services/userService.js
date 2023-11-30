@@ -78,6 +78,12 @@ const delDataByMS = (MS, tableName) => {
     },
   });
 };
+const getTotalCreditsPhase1 = (mssv, semester_id) => {
+  return axios.post(`/api/get-total-credit-phase1`, {
+    MS: mssv,
+    semester_id: semester_id,
+  });
+};
 export {
   handleLoginApi,
   handleSearchCourseService,
@@ -90,4 +96,5 @@ export {
   searchList,
   getListFaculty,
   delDataByMS,
+  getTotalCreditsPhase1,
 };

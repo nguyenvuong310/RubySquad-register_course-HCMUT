@@ -3,6 +3,7 @@ import { FormattedMessage } from "react-intl";
 import { connect } from "react-redux";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { emitter } from "../../utils/emitter";
+import "./modalEditStudent.scss";
 import _ from "lodash";
 class ModalEditStudent extends Component {
   constructor(props) {
@@ -82,44 +83,45 @@ class ModalEditStudent extends Component {
         size="lg"
       >
         <ModalHeader toggle={() => this.toggle()}>
-          Edit infor student
+          Edit information student
         </ModalHeader>
         <ModalBody>
           <div className="container">
-            <div className="row">
-              {" "}
-              <div className="col-6">
-                <label>Email</label>
-                <input
-                  type="email"
-                  className="form-group"
-                  onChange={(event) => this.handleOnChangeInput(event, "email")}
-                  value={this.state.email}
-                ></input>
-              </div>
-              <div className="col-6">
-                <label>Họ và tên</label>
-                <input
-                  type="text"
-                  className="form-group"
-                  onChange={(event) => this.handleOnChangeInput(event, "name")}
-                  value={this.state.name}
-                ></input>
-              </div>
-              <div className="col-6">
-                <label>Địa chỉ</label>
-                <input
-                  type="text"
-                  onChange={(event) =>
-                    this.handleOnChangeInput(event, "address")
-                  }
-                  value={this.state.address}
-                ></input>
-              </div>
-              <div className="col-6">
-                <label>Khoa</label>
-                <input type="text" value={this.state.faculty} disabled></input>
-              </div>
+            <div className="editmodal">
+              <label>Email</label>
+              <input
+                type="email"
+                className="content1"
+                onChange={(event) => this.handleOnChangeInput(event, "email")}
+                value={this.state.email}
+              ></input>
+            </div>
+            <div className="editmodal">
+              <label>Họ và tên</label>
+              <input
+                type="text"
+                className="content2"
+                onChange={(event) => this.handleOnChangeInput(event, "name")}
+                value={this.state.name}
+              ></input>
+            </div>
+            <div className="editmodal">
+              <label>Địa chỉ</label>
+              <input
+                className="content3"
+                type="text"
+                onChange={(event) => this.handleOnChangeInput(event, "address")}
+                value={this.state.address}
+              ></input>
+            </div>
+            <div className="editmodal">
+              <label>Khoa</label>
+              <input
+                className="content4"
+                type="text"
+                value={this.state.faculty}
+                disabled
+              ></input>
             </div>
           </div>
         </ModalBody>

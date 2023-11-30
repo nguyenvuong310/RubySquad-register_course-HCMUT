@@ -10,6 +10,7 @@ class ListLecturer extends Component {
       arrUser: [],
       isDesc: false,
       input: "",
+      orderByField: "email",
     };
   }
   async componentDidMount() {
@@ -27,7 +28,7 @@ class ListLecturer extends Component {
     });
   };
   getListLecturer = async () => {
-    let res = await getList("lecturers", "email", "ASC");
+    let res = await getList("lecturers", this.state.orderByField, "ASC");
     if (res && res.errCode === 0) {
       this.setState({
         arrUser: res.data,
@@ -38,15 +39,25 @@ class ListLecturer extends Component {
     let res = "";
     if (this.state.isDesc) {
       if (this.state.input) {
-        res = await searchList("lecturers", this.state.input, "email", "DESC");
+        res = await searchList(
+          "lecturers",
+          this.state.input,
+          this.state.orderByField,
+          "DESC"
+        );
       } else {
-        res = await getList("lecturers", "email", "DESC");
+        res = await getList("lecturers", this.state.orderByField, "DESC");
       }
     } else {
       if (this.state.input) {
-        res = await searchList("lecturers", this.state.input, "email", "ASC");
+        res = await searchList(
+          "lecturers",
+          this.state.input,
+          this.state.orderByField,
+          "ASC"
+        );
       } else {
-        res = await getList("lecturers", "email", "ASC");
+        res = await getList("lecturers", this.state.orderByField, "ASC");
       }
     }
     if (res && res.errCode === 0) {
@@ -59,9 +70,10 @@ class ListLecturer extends Component {
     this.setState(
       {
         isDesc: !this.state.isDesc,
+        orderByField: orderByField,
       },
       async () => {
-        await this.handleGetList(orderByField);
+        await this.handleGetList();
       }
     );
   };
@@ -117,7 +129,7 @@ class ListLecturer extends Component {
                         ? "fas fa-sort-amount-up ml-3 hover"
                         : "fas fa-sort-amount-down ml-3 hover"
                     }
-                    onClick={() => this.handleFillter("MSSV")}
+                    onClick={() => this.handleFillter("u.MS")}
                   ></i>
                 </th>
                 <th className="title-table">
@@ -139,7 +151,7 @@ class ListLecturer extends Component {
                         ? "fas fa-sort-amount-up ml-3 hover"
                         : "fas fa-sort-amount-down ml-3 hover"
                     }
-                    onClick={() => this.handleFillter("name")}
+                    onClick={() => this.handleFillter("f_name")}
                   ></i>
                 </th>
 

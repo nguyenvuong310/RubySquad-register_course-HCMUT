@@ -2,20 +2,33 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
 import "./RegPageSelection";
-import { handleCancelCourse } from "../../services/userService";
+import {
+  handleCancelCourse,
+  getTotalCreditsPhase1,
+} from "../../services/userService";
 import { toast } from "react-toastify";
 class TableRegister extends Component {
   constructor(props) {
     super(props);
     this.state = {
       listregister: [],
+      totalCredit: "",
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
     this.setState({
       listregister: this.props.listregister,
     });
+    await this.handleGetTotalCredit();
   }
+  handleGetTotalCredit = async () => {
+    let res = await getTotalCreditsPhase1(this.props.userInfor.MS, "231");
+    if (res && res.errCode === 0) {
+      this.setState({
+        totalCredit: res.result.totalCredits,
+      });
+    }
+  };
   componentDidUpdate(preProps) {
     if (this.props.listregister !== preProps.listregister) {
       this.setState({
@@ -37,6 +50,7 @@ class TableRegister extends Component {
         theme: "light",
       });
       this.props.getListRegister();
+      await this.handleGetTotalCredit();
     }
   };
   render() {
@@ -166,6 +180,12 @@ class TableRegister extends Component {
                         </div>
                       </div>
                     ))}
+                  <div className="regpage-form-table-end-content">
+                    Tổng số tín chỉ đăng ký: <b>{this.state.totalCredit}</b>
+                    <br></br>
+                    Tổng số môn đăng ký:{" "}
+                    <b>{listregister && listregister.length}</b>
+                  </div>
                 </div>
               </div>
               {/* Chưa có môn học đăng ký! */}

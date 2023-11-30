@@ -63,7 +63,7 @@ class RegPageSelection extends Component {
         theme: "light",
       });
     } else {
-      toast.warn("Môn học đã đăng ký", {
+      toast.warn(res.errMessage, {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
