@@ -80,7 +80,7 @@ class CreateStudent extends Component {
         birthday: this.state.birthday,
         address: this.state.address,
         sex: this.state.sex,
-        faculty: this.state.faculty,
+        faculty: this.state.faculty.value,
         yearStartLearn: this.state.yearStartLearn,
       });
       if (res && res.errCode === 0) {
@@ -117,7 +117,7 @@ class CreateStudent extends Component {
   };
   handleChangeSelect = (faculty) => {
     this.setState({
-      faculty: faculty.value,
+      faculty: faculty,
     });
   };
   render() {

@@ -61,7 +61,7 @@ class RegPageForm extends Component {
                   <Link
                     className="regpage-reg-button"
                     to="/regpage-select"
-                    typr="button"
+                    type="button"
                   >
                     ĐĂNG KÝ/ HIỆU CHỈNH
                   </Link>
