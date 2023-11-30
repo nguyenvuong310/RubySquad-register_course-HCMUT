@@ -277,6 +277,8 @@ BEGIN
   DECLARE register_count INT;
   DECLARE delete_count INT;
   DECLARE semester_exist INT;
+  DECLARE new_credit INT;
+  DECLARE total_credits INT;
 
   -- Check if semester_id exists
   SELECT COUNT(*)
@@ -286,8 +288,7 @@ BEGIN
 
   -- Check if it's a valid semester_id
   IF semester_exist = 0 THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Invalid semester_id. Semester does not exist.';
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid semester_id. Semester does not exist.';
   ELSE
     -- Count "REGISTER" actions
     SELECT COUNT(*)
@@ -307,13 +308,34 @@ BEGIN
       AND action = 'DELETE'
       AND student_id = NEW.student_id;
 
+    -- Calculate total credits for the semester
+    SELECT SUM(s.credits)
+    INTO total_credits
+    FROM Subjects s
+    WHERE s.subject_code IN (
+      SELECT rp.subject_code
+      FROM registerphase1 rp
+      WHERE rp.student_id = NEW.student_id AND rp.semester_id = NEW.semester_id
+      GROUP BY rp.subject_code
+      HAVING SUM(CASE WHEN rp.action = 'REGISTER' THEN 1 ELSE 0 END) > SUM(CASE WHEN rp.action = 'DELETE' THEN 1 ELSE 0 END)
+    );
+
+    -- Get the new credit for the subject
+    SELECT s.credits INTO new_credit
+    FROM Subjects s
+    WHERE s.subject_code = NEW.subject_code AND s.credits > 0
+    LIMIT 1;
+
     -- Check if it's a valid operation
     IF NEW.action = 'DELETE' AND register_count - delete_count = 0 THEN
-      SIGNAL SQLSTATE '45000'
-      SET MESSAGE_TEXT = 'Cannot delete. The subject has not been deleted.';
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot delete. The subject has not been deleted.';
     ELSEIF NEW.action = 'REGISTER' AND register_count - delete_count = 1 THEN
-      SIGNAL SQLSTATE '45000'
-      SET MESSAGE_TEXT = 'Cannot insert. The subject has already been registed.';
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot insert. The subject has already been registered.';
+    ELSE
+      -- Check if the total credits exceed 25
+      IF NEW.action = 'REGISTER' AND (total_credits + new_credit > 25) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot insert. Total credits exceed 25 for the semester.';
+      END IF;
     END IF;
   END IF;
 END;
@@ -757,33 +779,31 @@ END //
 DELIMITER ;
 DELIMITER //
 
-CREATE FUNCTION CalcTotalCreditSemesterRP1(p_student_id INT, p_semester_id INT) RETURNS DOUBLE
+CREATE FUNCTION CalcTotalCreditSemesterRP1(p_student_id INT, p_semester_id INT) RETURNS INT
 BEGIN
     DECLARE totalCredits INT;
 
     -- Check if the student exists
     IF NOT EXISTS (SELECT 1 FROM Students WHERE MS = p_student_id) THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Student does not exist';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Student does not exist';
     END IF;
 
     -- Check if the semester exists
     IF NOT EXISTS (SELECT 1 FROM Semester WHERE semester_id = p_semester_id) THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Semester does not exist';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Semester does not exist';
     END IF;
 
-    -- Calculate total credits for the specified semester
+    -- Calculate total credits for the semester
     SELECT SUM(s.credits)
     INTO totalCredits
-    FROM (
-        SELECT rp.student_id, rp.subject_code
+    FROM Subjects s
+    WHERE s.subject_code IN (
+        SELECT rp.subject_code
         FROM registerphase1 rp
         WHERE rp.student_id = p_student_id AND rp.semester_id = p_semester_id
-        GROUP BY rp.student_id, rp.subject_code
+        GROUP BY rp.subject_code
         HAVING SUM(CASE WHEN rp.action = 'REGISTER' THEN 1 ELSE 0 END) > SUM(CASE WHEN rp.action = 'DELETE' THEN 1 ELSE 0 END)
-    ) AS credits
-    JOIN Subjects s ON credits.subject_code = s.subject_code;
+    );
 
     RETURN totalCredits;
 END //

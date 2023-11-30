@@ -12,7 +12,7 @@ class TableRegister extends Component {
     super(props);
     this.state = {
       listregister: [],
-      totalCredit: 0,
+      totalCredit: "0",
     };
   }
   async componentDidMount() {
@@ -182,7 +182,8 @@ class TableRegister extends Component {
                       </div>
                     ))}
                   <div className="regpage-form-table-end-content">
-                    Tổng số tín chỉ đăng ký: <b>{this.state.totalCredit}</b>
+                    Tổng số tín chỉ đăng ký:{" "}
+                    <b>{this.state.totalCredit ? this.state.totalCredit : 0}</b>
                     <br></br>
                     Tổng số môn đăng ký:{" "}
                     <b>{listregister && listregister.length}</b>

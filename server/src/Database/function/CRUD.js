@@ -551,7 +551,7 @@ let getTotalCreditsRpPhase1 = async (mssv, semester_id) => {
 
     const connection = await getConnection();
 
-    const sqlQuery = `SELECT CalcTotalCreditSemester(?,?) AS totalCredits `;
+    const sqlQuery = `SELECT CalcTotalCreditSemesterRP1(?,?) AS totalCredits `;
     // console.log(mssv);
     // console.log(sqlQuery);
     const input = [mssv, semester_id];
