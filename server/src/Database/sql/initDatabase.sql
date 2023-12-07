@@ -125,6 +125,7 @@ CREATE TABLE IF NOT EXISTS Classes (
   class_name VARCHAR(255),
   is_lab BOOLEAN,
   max_slot INTEGER,
+  whole_num INTEGER DEFAULT 0,
   subject_code VARCHAR(255),
   FOREIGN KEY (subject_code) REFERENCES Subjects(subject_code),
   semester_id INTEGER,
@@ -553,6 +554,39 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER register_class
+BEFORE INSERT ON Attends
+FOR EACH ROW
+BEGIN
+    DECLARE wholenum INT;
+    DECLARE maxslot INT;
+
+    -- Get wholenum and max_slot for the specified class_id
+    SELECT whole_num, max_slot INTO wholenum, maxslot
+    FROM Classes
+    WHERE class_id = NEW.class_id;
+
+    -- Check if whole_num is less than max_slot
+    IF wholenum < maxslot AND NEW.action = 'REGISTER' THEN
+        -- Update wholenum in the Classes table
+        UPDATE Classes
+        SET whole_num = wholenum + 1
+        WHERE class_id = NEW.class_id;
+
+    ELSEIF wholenum < maxslot AND NEW.action = 'DELETE' THEN
+        -- Update wholenum in the Classes table for DELETE action
+        UPDATE Classes
+        SET whole_num = wholenum - 1
+        WHERE class_id = NEW.class_id;
+    END IF;
+END //
+
+DELIMITER ;
+
+
 
 
 DELIMITER //

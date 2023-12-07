@@ -67,6 +67,15 @@ class CreateStudent extends Component {
         break;
       }
     }
+    // Check email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.state.email)) {
+      isValid = false;
+      alert("Invalid email format");
+    } else if (!this.state.email.endsWith("@hcmut.edu.vn")) {
+      isValid = false;
+      alert("Email must end with @hcmut.edu.vn");
+    }
     return isValid;
   };
   handleCreateStudent = async () => {
